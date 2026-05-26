@@ -22,4 +22,14 @@ add_executable(
         "src/market data/CandleAggregator.h"
         "src/market data/CandleAggregator.cpp"
         "src/market data/ITickListener.h"
+        src/strategy/Position.h
+        src/trading/Trade.h
+        src/trading/Trade.cpp
+        src/replay/HistoricalDataPlayer.h
+        src/replay/HistoricalDataPlayer.cpp
+        src/strategy/ZScoreStrategy.h
+        src/strategy/ZScoreStrategy.cpp
+        src/export/EngineSnapshot.h
+        src/export/JsonExporter.h
+        src/export/JsonExporter.cpp
 )

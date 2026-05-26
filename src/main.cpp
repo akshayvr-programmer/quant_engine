@@ -4,38 +4,44 @@
 #include "market data/CandleAggregator.h"
 
 #include "strategy/MovingAverageStrategy.h"
+#include "replay/HistoricalDataPlayer.h"
+#include "strategy/ZScoreStrategy.h"
+#include "export/JsonExporter.h"
 
 int main() {
 
-    MarketDataFeed feed;
+    std::cout << "===== ENGINE START =====" << std::endl;
 
-    MovingAverageStrategy strategy(3);
+    MarketDataFeed feed;
+    ZScoreStrategy zscoreStrategy(5,1.5);
+
+    MovingAverageStrategy strategy(3, 5);
 
     CandleAggregator aggregator;
 
     feed.subscribe(&strategy);
 
-    feed.subscribe(&aggregator);
+    //feed.subscribe(&aggregator);
 
-    feed.addTick(
-        Tick("AAPL", 100.0, 10.0, 1)
-    );
+    feed.subscribe(&zscoreStrategy);
+    
 
-    feed.addTick(
-        Tick("AAPL", 102.0, 15.0, 2)
-    );
+    HistoricalDataPlayer player("data.csv");
 
-    feed.addTick(
-        Tick("AAPL", 99.0, 20.0, 3)
-    );
+    player.replay(feed);
 
-    feed.addTick(
-        Tick("AAPL", 106.0, 25.0, 4)
-    );
+    JsonExporter::exportSnapshots(
+    strategy.getSnapshots(),
+    "engine_output.json");
 
-    feed.addTick(
-        Tick("AAPL", 101.0, 18.0, 5)
-    );
+
+
+
+
+
+
+
+    std::cout << "===== ENGINE END =====" << std::endl;
 
     return 0;
 }
