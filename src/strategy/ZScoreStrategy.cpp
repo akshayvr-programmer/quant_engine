@@ -6,13 +6,16 @@
 
 #include <cmath>
 #include <iostream>
+#include "../export/EngineSnapshot.h"
 
 ZScoreStrategy::ZScoreStrategy(
     size_t windowSize,
-    double threshold
+    double threshold,
+    AnalyticsManager* analytics_manager
 )
     : windowSize(windowSize),
-      threshold(threshold)
+      threshold(threshold),
+      analyticsManager(analytics_manager)
 {
 }
 
@@ -104,6 +107,28 @@ void ZScoreStrategy::onTick(const Tick &tick) {
             break;
     }
 
+    EngineSnapshot snapshot {
+
+        tick.timestamp,
+
+        tick.price,
+
+        mean,
+
+        mean,
+
+        zscore,
+
+        action,
+
+        0.0
+    };
+
+    analyticsManager->addSnapshot(
+        snapshot
+    );
+
+
     std::cout
         << "[Z-Score Strategy]"
         << " Price: " << tick.price
@@ -112,6 +137,8 @@ void ZScoreStrategy::onTick(const Tick &tick) {
         << " | Z-Score: " << zscore
         << " | Action: " << action
         << std::endl;
+
+
 
 
 

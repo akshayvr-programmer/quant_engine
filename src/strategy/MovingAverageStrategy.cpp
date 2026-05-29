@@ -1,27 +1,20 @@
-//
-// Created by axoss-scott on 5/25/26.
-//
-
 #include <iostream>
 
 #include "MovingAverageStrategy.h"
+#include "../trading/TradeEvent.h"
 
 MovingAverageStrategy::MovingAverageStrategy(
     size_t shortWindow,
-    size_t longWindow
+    size_t longWindow,
+    AnalyticsManager* analytics_manager
 )
     : shortWindow(shortWindow),
       longWindow(longWindow),
       currentPosition(Position::FLAT),
       activeTrade(nullptr),
+      analyticsManager(analytics_manager),
       totalPnL(0.0)
 {
-}
-
-const std::vector<EngineSnapshot>&
-MovingAverageStrategy::getSnapshots() const
-{
-    return snapshots;
 }
 
 void MovingAverageStrategy::onTick(
@@ -65,7 +58,6 @@ void MovingAverageStrategy::onTick(
         signal == Signal::BUY &&
         currentPosition == Position::FLAT
     ) {
-
         currentPosition = Position::LONG;
 
         activeTrade = new Trade(
@@ -75,6 +67,15 @@ void MovingAverageStrategy::onTick(
             tick.timestamp
         );
 
+        TradeEvent event {
+            TradeEventType::ENTER_LONG,
+            tick.symbol,
+            tick.price,
+            tick.timestamp
+        };
+
+        tradeEvents.push_back(event);
+
         action = "ENTER LONG";
     }
 
@@ -82,7 +83,6 @@ void MovingAverageStrategy::onTick(
         signal == Signal::SELL &&
         currentPosition == Position::LONG
     ) {
-
         currentPosition = Position::FLAT;
 
         activeTrade->exitPrice =
@@ -98,6 +98,15 @@ void MovingAverageStrategy::onTick(
             activeTrade->entryPrice;
 
         totalPnL += pnl;
+
+        TradeEvent event {
+            TradeEventType::EXIT_LONG,
+            tick.symbol,
+            tick.price,
+            tick.timestamp
+        };
+
+        tradeEvents.push_back(event);
 
         action =
             "EXIT LONG | Trade PnL: " +
@@ -129,7 +138,9 @@ void MovingAverageStrategy::onTick(
         totalPnL
     };
 
-    snapshots.push_back(snapshot);
+    analyticsManager->addSnapshot(
+        snapshot
+    );
 
     std::cout
         << "Price: " << tick.price
@@ -169,4 +180,9 @@ Signal MovingAverageStrategy::generateSignal(
     }
 
     return Signal::HOLD;
+}
+const std::vector<Trade>&
+MovingAverageStrategy::getCompletedTrades() const
+{
+    return completedTrades;
 }

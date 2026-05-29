@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-CandleAggregator::CandleAggregator() : initialized(false)
+CandleAggregator::CandleAggregator() : initialized(false), tickCount(0), ticksPerCandle(10)
 
 
 {
@@ -16,6 +16,7 @@ CandleAggregator::CandleAggregator() : initialized(false)
 
 void CandleAggregator::onTick(const Tick& tick)
 {
+    ++tickCount;
     if (!initialized) {
 
         currentCandle = Candle(
@@ -44,13 +45,25 @@ void CandleAggregator::onTick(const Tick& tick)
 
     currentCandle.endTimestamp = tick.timestamp;
 
+    if (tickCount >= ticksPerCandle) {
+        candleHistory.push_back(currentCandle);
+    }
+
     std::cout
-        << "Candle | "
+        << "[Candle Closed] "
         << "O: " << currentCandle.open
         << " H: " << currentCandle.high
         << " L: " << currentCandle.low
         << " C: " << currentCandle.close
         << std::endl;
+    currentCandle = Candle(tick.symbol, tick.price, tick.price, tick.price, tick.price, tick.timestamp, tick.timestamp);
+
     
 
+}
+
+const std::vector<Candle>&
+CandleAggregator::getCandles() const
+{
+    return candleHistory;
 }

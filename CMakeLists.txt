@@ -32,4 +32,17 @@ add_executable(
         src/export/EngineSnapshot.h
         src/export/JsonExporter.h
         src/export/JsonExporter.cpp
+        src/strategy/EMAStrategy.h
+        src/strategy/EMAStrategy.cpp
+        src/trading/TradeEvent.h
+        src/analytics/AnalyticsManager.h
+        src/analytics/AnalyticsManager.cpp
+        src/analytics/PerformanceMetrics.h
+        src/analytics/MetricsCalculator.h
+        src/analytics/MetricsCalculator.cpp
+        src/ml/RegimeClassifier.cpp
+        src/ml/RegimeClassifier.h
+        src/ml/Regime.h
+        src/ml/FeatureExtractor.cpp
+        src/ml/FeatureExtractor.h
 )
