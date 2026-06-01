@@ -1,6 +1,6 @@
 # QuantEngine
 
-A modular quantitative research and backtesting platform built in modern C++.
+A modular quantitative research, backtesting, and machine learning platform built in modern C++.
 
 ## Overview
 
@@ -11,7 +11,7 @@ QuantEngine is a personal quantitative finance research platform designed to exp
 * Market regime detection
 * Risk management
 * Portfolio analytics
-* Machine learning driven trading systems
+* Machine learning-driven trading systems
 
 The long-term vision is to evolve QuantEngine into a complete research environment capable of testing systematic trading ideas on real market data.
 
@@ -38,13 +38,15 @@ Adaptive moving average crossover strategy with stronger emphasis on recent mark
 
 #### Z-Score Mean Reversion
 
-Statistical arbitrage inspired strategy based on deviations from rolling mean.
+Statistical mean-reversion strategy based on deviations from rolling mean.
 
 ---
 
 ## Analytics & Backtesting
 
 ### Performance Metrics
+
+Implemented:
 
 * Total PnL
 * Win Rate
@@ -55,9 +57,10 @@ Statistical arbitrage inspired strategy based on deviations from rolling mean.
 
 ### Trade Tracking
 
-* Trade entry/exit events
+* Trade entry events
+* Trade exit events
 * Position tracking
-* Strategy level PnL accounting
+* Strategy-level PnL accounting
 
 ---
 
@@ -74,18 +77,27 @@ Supports:
 * Low
 * Close
 
-The candle infrastructure serves as the foundation for future volatility and regime models.
+The candle infrastructure serves as the foundation for future volatility models, regime detection, and statistical arbitrage research.
 
 ---
 
-## Machine Learning Layer (In Progress)
+## Machine Learning & Quantitative Research
 
-### Feature Extraction
+### Feature Engineering
 
-Current features:
+Implemented:
 
 * Momentum
-* Volatility
+* Rolling Volatility
+
+Planned:
+
+* EMA Spread
+* Volume-Based Features
+* Return-Based Features
+* Trend Strength Indicators
+
+These features form the foundation of future machine learning and regime classification models.
 
 ### Regime Detection
 
@@ -95,12 +107,64 @@ Current market states:
 * MEAN_REVERTING
 * VOLATILE
 
-This layer will later evolve into:
+Current pipeline:
+
+Market Data
+→ Feature Extraction
+→ Regime Classification
+→ Strategy Selection
+
+### Research Notebooks
+
+#### regime_detection_research.ipynb
+
+Research notebook for:
+
+* Volatility Analysis
+* Momentum Analysis
+* Feature Engineering
+* Decision Tree Classification
+* Feature Importance Analysis
+
+#### strategy_benchmarking.ipynb
+
+Research notebook for:
+
+* SMA vs EMA vs Z-Score
+* Equity Curve Analysis
+* Sharpe Ratio Comparison
+* Drawdown Analysis
+* Profit Factor Analysis
+
+### Future ML Roadmap
 
 * Decision Trees
 * Random Forests
-* XGBoost Models
+* XGBoost
 * Hidden Markov Models
+* Kalman Filters
+* Neural Volatility Forecasting
+
+---
+
+## Performance & Engineering
+
+QuantEngine is designed as a modular, event-driven research platform.
+
+Current design principles:
+
+* Event-driven architecture
+* Modular strategy interfaces
+* Strategy-independent analytics layer
+* Decoupled market data and execution components
+
+Upcoming optimizations:
+
+* Memory pool allocation
+* Cache-friendly data structures
+* Lock-free queues
+* Latency benchmarking
+* Multi-threaded backtesting
 
 ---
 
@@ -113,31 +177,38 @@ React-based dashboard for:
 * Performance inspection
 * Market state visualization
 
+Planned:
+
+* Equity curve visualization
+* Drawdown charts
+* Regime visualization
+* Multi-strategy comparison dashboard
+
 ---
 
 ## Research Results
 
 ### 5-Year AAPL Backtest
 
-EMA Strategy:
+#### EMA Strategy
 
 * Total Trades: 80
 * Win Rate: 40.0%
 * Total PnL: +50.4
 * Profit Factor: 1.29
-* Max Drawdown: 46.14
+* Maximum Drawdown: 46.14
 
-SMA Strategy:
+#### SMA Strategy
 
 * Total Trades: 133
 * Win Rate: 36.8%
 * Total PnL: -10.74
 * Profit Factor: 0.96
-* Max Drawdown: 52.24
+* Maximum Drawdown: 52.24
 
-Observation:
+### Observation
 
-EMA outperformed SMA on real AAPL historical data while producing lower drawdown and higher profit factor.
+EMA outperformed SMA on real AAPL historical data while producing lower drawdown and a higher profit factor.
 
 ---
 
@@ -154,26 +225,28 @@ Market Data
 
 ## Roadmap
 
-### Phase 1 — Complete Core Engine
+### Phase 1 — Core Engine
 
 * [x] SMA Strategy
 * [x] EMA Strategy
 * [x] Z-Score Strategy
-* [x] Backtesting Metrics
+* [x] Performance Metrics
 * [x] Candle Infrastructure
+* [x] Analytics Layer
 
 ### Phase 2 — Adaptive Trading
 
 * [ ] Regime-Aware Strategy Routing
 * [ ] Equity Curve Visualization
 * [ ] Multi-Asset Backtesting
+* [ ] Strategy Benchmarking Dashboard
 
 ### Phase 3 — Quantitative Research
 
 * [ ] Cointegration Detection
 * [ ] Pairs Trading
+* [ ] Ornstein-Uhlenbeck Models
 * [ ] Kalman Filters
-* [ ] Hidden Markov Models
 * [ ] Kelly Position Sizing
 
 ### Phase 4 — Machine Learning
@@ -181,6 +254,7 @@ Market Data
 * [ ] Decision Trees
 * [ ] Random Forests
 * [ ] XGBoost
+* [ ] Hidden Markov Models
 * [ ] Volatility Forecasting Models
 
 ### Phase 5 — Portfolio & Risk
@@ -188,22 +262,30 @@ Market Data
 * [ ] Portfolio Risk Dashboard
 * [ ] Monte Carlo Simulations
 * [ ] Risk Factor Decomposition
+* [ ] Portfolio Optimization
+
+### Phase 6 — Advanced Research
+
+* [ ] Crypto Arbitrage Scanner
+* [ ] Alternative Data Alpha Pipeline
+* [ ] Reinforcement Learning Market Making
+* [ ] Volatility Surface Modeling
 
 ---
 
 ## Tech Stack
 
-Backend:
+### Backend
 
 * C++17
 * CMake
 
-Frontend:
+### Frontend
 
 * React
 * TypeScript
 
-Research:
+### Research
 
 * Statistical Learning
 * Quantitative Finance
@@ -211,4 +293,15 @@ Research:
 
 ---
 
-Built as a long-term quantitative research platform and learning project.
+## Long-Term Vision
+
+QuantEngine aims to become a full quantitative research platform combining:
+
+* Statistical Arbitrage
+* Market Regime Detection
+* Machine Learning
+* Portfolio Optimization
+* Risk Analytics
+* Low-Latency Systems Engineering
+
+The goal is not only to backtest strategies but to build an end-to-end environment for researching, evaluating, and deploying systematic trading ideas.
