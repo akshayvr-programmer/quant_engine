@@ -45,4 +45,9 @@ add_executable(
         src/ml/Regime.h
         src/ml/FeatureExtractor.cpp
         src/ml/FeatureExtractor.h
+        src/strategy/PairParameters.h
+        src/strategy/PairsTradingStrategy.h
+        src/strategy/PairsTradingStrategy.cpp
+        src/config/PairParameterLoader.cpp
+        src/config/PairParameterLoader.h
 )

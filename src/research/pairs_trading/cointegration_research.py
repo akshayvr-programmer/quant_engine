@@ -27,6 +27,7 @@ import statsmodels.api as sm
 from statsmodels.tsa.stattools import adfuller
 import matplotlib.pyplot as plt
 
+import json
 
 # ----------------------------------------------------------------------
 # Config
@@ -58,8 +59,10 @@ def estimate_beta_and_spread(data, ticker_a, ticker_b):
     y = data[ticker_a]
     model = sm.OLS(y, X).fit()
     beta = model.params[ticker_b]
+    alpha = model.params["const"]
+
     spread = y - model.predict(X)         # residual = synthetic mean-reverting series
-    return beta, spread
+    return alpha, beta, spread
 
 
 def test_stationarity(spread):
@@ -90,9 +93,11 @@ def main():
     print(f"Loaded {len(data)} aligned daily closes for {TICKER_A}/{TICKER_B}\n")
 
     # --- 2. Beta + spread ---------------------------------------------
-    beta, spread = estimate_beta_and_spread(data, TICKER_A, TICKER_B)
+    alpha, beta, spread = estimate_beta_and_spread(data, TICKER_A, TICKER_B)
     print(f"Beta (hedge ratio): {beta:.4f}")
     print(f"Spread mean: {spread.mean():.4f}   std: {spread.std():.4f}\n")
+    print(f"Alpha (intercept): {alpha:.4f}")
+
 
     # --- 3. Stationarity verdict --------------------------------------
     adf_stat, p_value, crit = test_stationarity(spread)
@@ -109,10 +114,63 @@ def main():
     # --- 4. Parameters handed to the C++ engine -----------------------
     print("Parameters for execution engine:")
     print(f"   beta        = {beta:.6f}")
+    print(f"   alpha        = {alpha:.6f}")
     print(f"   spread_mean = {spread.mean():.6f}")
     print(f"   spread_std  = {spread.std():.6f}")
     print(f"   entry_z     = {ENTRY_Z}")
     print(f"   exit_z      = {EXIT_Z}\n")
+
+    params = {
+        "pair": f"{TICKER_A}_{TICKER_B}",
+        "beta": float(beta),
+        "alpha": float(alpha),
+        "spread_mean": float(spread.mean()),
+        "spread_std": float(spread.std()),
+        "entry_z": ENTRY_Z,
+        "exit_z": EXIT_Z,
+        "p_value": float(p_value)
+    }
+
+    with open(
+        f"{TICKER_A}_{TICKER_B}.json",
+        "w"
+    ) as f:
+        json.dump(
+        params,
+        f,
+        indent=4
+    )
+
+    print(f"Saved {TICKER_A}_{TICKER_B}.json")
+
+    # --- 4.5 Export Engine Data ------------------------------------------
+    # --- 4.5 Export Engine Data ------------------------------------------
+
+    engine_rows = []
+
+    for timestamp, row in data.iterrows():
+        engine_rows.append({
+            "symbol": TICKER_A,
+             "price": float(row[TICKER_A]),
+            "volume": 0,
+             "timestamp": int(timestamp.timestamp()),
+
+        })
+
+        engine_rows.append({
+            "symbol": TICKER_B,
+            "price": float(row[TICKER_B]),
+            "volume": 0,
+            "timestamp": int(timestamp.timestamp()),
+
+        })
+
+    engine_df = pd.DataFrame(engine_rows)
+
+    engine_df.to_csv(f"{TICKER_A}_{TICKER_B}_engine.csv",index=False)
+
+
+    print(f"Saved {TICKER_A}_{TICKER_B}_engine.csv")
 
     # --- 5. Charts -----------------------------------------------------
     # Chart 1: the two raw prices wandering (non-stationary -- no flat home)

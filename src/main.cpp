@@ -13,6 +13,9 @@
 #include "analytics/MetricsCalculator.h"
 #include "ml/FeatureExtractor.h"
 #include "ml/RegimeClassifier.h"
+#include "strategy/PairParameters.h"
+#include "strategy/PairsTradingStrategy.h"
+#include "config/PairParameterLoader.h"
 
 int main() {
 
@@ -37,11 +40,26 @@ int main() {
     //feed.subscribe(&zscoreStrategy);
 
     feed.subscribe(&ema_strategy);
+    PairParamters params =
+    PairParameterLoader::load(
+        "../src/config/KO_PEP.json"
+    );
+
+    PairsTradingStrategy pairStrategy(
+    "KO",
+    "PEP",
+    params);
+
+    feed.subscribe(&pairStrategy);
+
+
 
 
     
 
-    HistoricalDataPlayer player("data.csv");
+    HistoricalDataPlayer player("../src/config/KO_PEP_engine.csv");
+
+
 
     player.replay(feed);
 
