@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 project(QuantEngine)
 
@@ -50,4 +50,33 @@ add_executable(
         src/strategy/PairsTradingStrategy.cpp
         src/config/PairParameterLoader.cpp
         src/config/PairParameterLoader.h
+        src/execution/Order.h
+        src/execution/Trade.h
+        src/execution/OrderEvent.h
+        src/execution/MatchingResult.h
+        src/execution/OrderBook.h
+        src/execution/OrderBook.cpp
+
+)
+
+include(FetchContent)
+
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
+)
+
+FetchContent_MakeAvailable(googletest)
+include(GoogleTest)
+
+
+add_executable(
+        OrderBookTests
+        tests/OrderBookTests.cpp
+
+        src/execution/OrderBook.cpp
+)
+target_link_libraries(
+        OrderBookTests
+        GTest::gtest_main
 )

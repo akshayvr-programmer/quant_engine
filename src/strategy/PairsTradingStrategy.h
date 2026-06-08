@@ -2,17 +2,28 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 #include "Istrategy.h"
-
 #include "PairParameters.h"
 
-class PairsTradingStrategy : public IStrategy {
+#include "../trading/Trade.h"
+
+class PairsTradingStrategy : public IStrategy
+{
 private:
+
     std::string symbolA;
     std::string symbolB;
 
-    enum class PairPosition {
+    Trade* activeTrade;
+
+    std::vector<Trade> completedTrades;
+
+    double totalPnL;
+
+    enum class PairPosition
+    {
         FLAT,
         LONG_SPREAD,
         SHORT_SPREAD
@@ -20,21 +31,35 @@ private:
 
     PairPosition currentPosition;
 
-
     PairParamters params;
-    std::unordered_map<std::string, double> latestPrices;
+
+    std::unordered_map<
+        std::string,
+        double
+    > latestPrices;
+
 public:
-    PairsTradingStrategy(const std::string& symbolA, const std::string& symbolB, PairParamters& params);
-    void onTick(const Tick& tick) override;
+
+    PairsTradingStrategy(
+        const std::string& symbolA,
+        const std::string& symbolB,
+        const PairParamters& params
+    );
+
+    void onTick(
+        const Tick& tick
+    ) override;
+
+    const std::vector<Trade>&
+    getCompletedTrades() const;
+
+    double getTotalPnL() const;
 
 private:
+
     double calculateSpread() const;
-    double calculateZscore(double spread) const;
 
-
-
-
+    double calculateZscore(
+        double spread
+    ) const;
 };
-
-
-

@@ -1,19 +1,47 @@
 #include "PairsTradingStrategy.h"
+
 #include <iostream>
 
-PairsTradingStrategy::PairsTradingStrategy(const std::string &symbolA, const std::string &symbolB, PairParamters &params) : symbolA(symbolA), symbolB(symbolB), params(params), currentPosition(PairPosition::FLAT){
+PairsTradingStrategy::PairsTradingStrategy(
+    const std::string& symbolA,
+    const std::string& symbolB,
+    const PairParamters& params
+)
+    :
+    symbolA(symbolA),
+    symbolB(symbolB),
+    params(params),
+    currentPosition(PairPosition::FLAT),
+    activeTrade(nullptr),
+    totalPnL(0.0)
+{
 }
 
-double PairsTradingStrategy::calculateSpread() const {
-    double priceA = latestPrices.at(symbolA);
-    double priceB = latestPrices.at(symbolB);
+double PairsTradingStrategy::calculateSpread() const
+{
+    double priceA =
+        latestPrices.at(symbolA);
 
-    return priceA - (params.beta*priceB + params.alpha);
+    double priceB =
+        latestPrices.at(symbolB);
+
+    return
+        priceA -
+        (
+            params.alpha +
+            params.beta * priceB
+        );
 }
+
 double PairsTradingStrategy::calculateZscore(
     double spread
 ) const
 {
+    if (params.spreadStd == 0.0)
+    {
+        return 0.0;
+    }
+
     return
         (spread - params.spreadMean)
         /
@@ -24,7 +52,12 @@ void PairsTradingStrategy::onTick(
     const Tick& tick
 )
 {
-    std::cout << "[TICK]" << tick.symbol << " " << tick.price << std::endl;
+    std::cout
+        << "[TICK] "
+        << tick.symbol
+        << " "
+        << tick.price
+        << std::endl;
 
     latestPrices[tick.symbol] =
         tick.price;
@@ -33,7 +66,8 @@ void PairsTradingStrategy::onTick(
         latestPrices.find(symbolA)
         ==
         latestPrices.end()
-    ) {
+    )
+    {
         return;
     }
 
@@ -41,7 +75,8 @@ void PairsTradingStrategy::onTick(
         latestPrices.find(symbolB)
         ==
         latestPrices.end()
-    ) {
+    )
+    {
         return;
     }
 
@@ -58,54 +93,164 @@ void PairsTradingStrategy::onTick(
         << z
         << std::endl;
 
-    if (z > params.entryZ && currentPosition == PairPosition::FLAT) {
-        currentPosition = PairPosition::SHORT_SPREAD;
-        std::cout
-            << "[ENTER SHORT SPREAD]"
-            << "Z = "
-            << z
-            << std::endl;
-
-    }
-    else if (z < -params.entryZ && currentPosition == PairPosition::FLAT) {
-        currentPosition = PairPosition::LONG_SPREAD;
-        std::cout
-             << "[ENTER SHORT SPREAD]"
-             << "Z = "
-             << z
-             << std::endl;
-    }
+    // =========================
+    // ENTRY LOGIC
+    // =========================
 
     if (
-    currentPosition ==
-    PairPosition::LONG_SPREAD
-)
+        currentPosition ==
+        PairPosition::FLAT
+    )
+    {
+        if (z > params.entryZ)
+        {
+            currentPosition =
+                PairPosition::SHORT_SPREAD;
+
+            activeTrade =
+                new Trade(
+                    symbolA + "-" + symbolB,
+                    Position::SHORT,
+                    spread,
+                    tick.timestamp
+                );
+
+            std::cout
+                << "[ENTER SHORT SPREAD]"
+                << " Spread: "
+                << spread
+                << std::endl;
+
+            return;
+        }
+
+        if (z < -params.entryZ)
+        {
+            currentPosition =
+                PairPosition::LONG_SPREAD;
+
+            activeTrade =
+                new Trade(
+                    symbolA + "-" + symbolB,
+                    Position::LONG,
+                    spread,
+                    tick.timestamp
+                );
+
+            std::cout
+                << "[ENTER LONG SPREAD]"
+                << " Spread: "
+                << spread
+                << std::endl;
+
+            return;
+        }
+    }
+
+    // =========================
+    // EXIT LONG SPREAD
+    // =========================
+
+    if (
+        currentPosition ==
+        PairPosition::LONG_SPREAD
+        &&
+        activeTrade != nullptr
+    )
     {
         if (z >= params.exitZ)
         {
+            activeTrade->exitPrice =
+                spread;
+
+            activeTrade->exitTimestamp =
+                tick.timestamp;
+
+            activeTrade->open =
+                false;
+
+            double pnl =
+                spread -
+                activeTrade->entryPrice;
+
+            totalPnL += pnl;
+
+            completedTrades.push_back(
+                *activeTrade
+            );
+
+            delete activeTrade;
+
+            activeTrade = nullptr;
+
             currentPosition =
                 PairPosition::FLAT;
 
             std::cout
                 << "[EXIT LONG SPREAD]"
+                << " PnL: "
+                << pnl
                 << std::endl;
         }
     }
 
+    // =========================
+    // EXIT SHORT SPREAD
+    // =========================
+
     if (
         currentPosition ==
         PairPosition::SHORT_SPREAD
+        &&
+        activeTrade != nullptr
     )
     {
         if (z <= params.exitZ)
         {
+            activeTrade->exitPrice =
+                spread;
+
+            activeTrade->exitTimestamp =
+                tick.timestamp;
+
+            activeTrade->open =
+                false;
+
+            double pnl =
+                activeTrade->entryPrice -
+                spread;
+
+            totalPnL += pnl;
+
+            completedTrades.push_back(
+                *activeTrade
+            );
+
+            delete activeTrade;
+
+            activeTrade = nullptr;
+
             currentPosition =
                 PairPosition::FLAT;
 
             std::cout
                 << "[EXIT SHORT SPREAD]"
+                << " PnL: "
+                << pnl
                 << std::endl;
         }
     }
 
+    std::cout
+        << "Trades: "
+        << completedTrades.size()
+        << " | Total PnL: "
+        << totalPnL
+        << std::endl;
+}
+
+const std::vector<Trade>&
+PairsTradingStrategy::getCompletedTrades() const
+{
+    return completedTrades;
 }

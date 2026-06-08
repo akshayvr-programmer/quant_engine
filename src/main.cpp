@@ -65,7 +65,7 @@ int main() {
 
     PerformanceMetrics metrics =
     MetricsCalculator::calculate(
-        ema_strategy.getCompletedTrades()
+        pairStrategy.getCompletedTrades()
     );
 
     std::cout
