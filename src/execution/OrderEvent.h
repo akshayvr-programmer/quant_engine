@@ -15,7 +15,8 @@ struct OrderEvent {
 
     OrderId orderId;
     OrderEventType type;
-    Quantity filledQuantity;
+    Quantity fillQuantity;
+    Quantity remainingQuantity;
 
 
 };

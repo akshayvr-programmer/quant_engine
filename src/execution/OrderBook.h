@@ -22,6 +22,10 @@ class OrderBook {
 private:
     void processLimitBuy(Order order, MatchingResult& result);
     void processLimitSell(Order order, MatchingResult& result);
+    void processMarketBuy(Order order, MatchingResult& result);
+    void processMarketSell(Order order, MatchingResult& result);
+
+
 
 public:
 

@@ -4,6 +4,14 @@ MatchingResult OrderBook::submitOrder(const Order &order) {
 
     MatchingResult result;
 
+    result.events.push_back(
+        {
+        order.id,
+        OrderEventType::ACCEPTED,
+        0,
+        order.remainingQuantity});
+
+
     if (order.type == OrderType::LIMIT) {
         if (order.side == Side::BUY) {
             processLimitBuy(order, result);
@@ -14,6 +22,15 @@ MatchingResult OrderBook::submitOrder(const Order &order) {
 
         }
 
+    }
+
+    if (order.type == OrderType::MARKET) {
+        if (order.side == Side::BUY) {
+            processMarketBuy(order, result);
+        }
+        else {
+            processMarketSell(order, result);
+        }
     }
 
     return result;
@@ -165,6 +182,94 @@ std::optional<Price> OrderBook::bestAsk() const {
     }
     return asks.begin()->first;
 }
+void OrderBook::processMarketSell(Order order, MatchingResult& result) {
+
+    while (order.remainingQuantity > 0 && !bids.empty()) {
+
+        auto bestBidIt = bids.begin();
+        Price bestBidPrice = bestBidIt->first;
+
+        OrderQueue& queue = bestBidIt->second;
+        Order& restingOrder = queue.front();
+        Quantity tradeqty = std::min(restingOrder.remainingQuantity, order.remainingQuantity);
+
+        restingOrder.remainingQuantity -= tradeqty;
+        order.remainingQuantity -= tradeqty;
+
+        Trade trade {
+            order.id,
+            restingOrder.id,
+            bestBidPrice,
+            tradeqty
+
+
+        };
+
+        result.trades.push_back(trade);
+
+        if (restingOrder.remainingQuantity == 0) {
+            OrderId fillerOrderId = restingOrder.id;
+            queue.pop_front();
+            orderIndex.erase(fillerOrderId);
+
+        }
+
+        if (queue.empty()) {
+            bids.erase(bestBidIt);
+        }
+
+    }
+}
+
+void OrderBook::processMarketBuy(Order order, MatchingResult& result) {
+
+    while (order.remainingQuantity > 0 && !asks.empty()) {
+        auto bestAskIt = asks.begin();
+
+        Price bestAskPrice = bestAskIt->first;
+        OrderQueue& queue = bestAskIt->second;
+        Order& restingOrder = queue.front();
+
+        Quantity tradeqty = std::min(order.remainingQuantity, restingOrder.remainingQuantity);
+
+        order.remainingQuantity -= tradeqty;
+        restingOrder.remainingQuantity -= tradeqty;
+
+        Trade trade {
+            order.id,
+            restingOrder.id,
+            bestAskPrice,
+            tradeqty
+
+
+
+        };
+
+        result.trades.push_back(trade);
+
+
+        if (restingOrder.remainingQuantity == 0) {
+            OrderId fillerOrderId = restingOrder.id;
+
+            queue.pop_front();
+
+            orderIndex.erase(fillerOrderId);
+
+
+
+
+
+        }
+
+        if (queue.empty()) {
+            asks.erase(bestAskIt);
+
+        }
+
+
+
+    }
+};
 
 void OrderBook::processLimitBuy(
     Order order,
@@ -190,6 +295,25 @@ void OrderBook::processLimitBuy(
         order.remainingQuantity -= tradeQty;
         restingOrder.remainingQuantity -= tradeQty;
 
+        if (order.remainingQuantity > 0) {
+            result.events.push_back({
+                order.id,
+                OrderEventType::PARTIALLY_FILLED,
+                tradeQty,
+                order.remainingQuantity
+            });
+
+        }
+        if (order.remainingQuantity == 0) {
+            result.events.push_back({
+                order.id,
+                OrderEventType::FILLED,
+                tradeQty,
+                0
+
+            });
+        }
+
         Trade trade {
             order.id,
             restingOrder.id,
@@ -212,6 +336,8 @@ void OrderBook::processLimitBuy(
 
 
         }
+
+
 
 
 
@@ -253,6 +379,16 @@ void OrderBook::processLimitSell(
 
         order.remainingQuantity -= tradeQty;
         restingOrder.remainingQuantity -= tradeQty;
+
+        if (order.remainingQuantity > 0) {
+
+            result.events.push_back({order.id, OrderEventType::PARTIALLY_FILLED, tradeQty, order.remainingQuantity});
+
+        }
+        if (order.remainingQuantity == 0) {
+            result.events.push_back({order.id, OrderEventType::FILLED, tradeQty, 0});
+        }
+        
         Trade trade {
         order.id,
         restingOrder.id,

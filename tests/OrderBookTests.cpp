@@ -4,36 +4,51 @@
 
 TEST(
     OrderBookTests,
-    NonCrossingOrders
+    FilledEventGenerated
 )
 {
     OrderBook book;
 
-    Order sell{
-        1,
-        Side::SELL,
-        OrderType::LIMIT,
-        105,
-        50,
-        50
-    };
-
-    Order buy{
-        2,
-        Side::BUY,
-        OrderType::LIMIT,
-        100,
-        50,
-        50
-    };
-
-    book.submitOrder(sell);
+    book.submitOrder(
+        Order{
+            1,
+            Side::SELL,
+            OrderType::LIMIT,
+            100,
+            50,
+            50
+        }
+    );
 
     auto result =
-        book.submitOrder(buy);
+        book.submitOrder(
+            Order{
+                2,
+                Side::BUY,
+                OrderType::LIMIT,
+                100,
+                50,
+                50
+            }
+        );
 
-    EXPECT_EQ(
-        result.trades.size(),
-        0
+    bool foundFilled = false;
+
+    for (
+        const auto& event :
+        result.events
+    )
+    {
+        if (
+            event.type ==
+            OrderEventType::FILLED
+        )
+        {
+            foundFilled = true;
+        }
+    }
+
+    EXPECT_TRUE(
+        foundFilled
     );
 }
