@@ -2,12 +2,12 @@
 
 #include <vector>
 
-#include "Trade.h"
+#include "ExecutionTrade.h"
 #include "OrderEvent.h"
 
 struct MatchingResult
 {
-    std::vector<Trade> trades;
+    std::vector<ExecutionTrade> trades;
 
     std::vector<OrderEvent> events;
 };

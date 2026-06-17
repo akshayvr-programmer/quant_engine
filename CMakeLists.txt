@@ -51,11 +51,18 @@ add_executable(
         src/config/PairParameterLoader.cpp
         src/config/PairParameterLoader.h
         src/execution/Order.h
-        src/execution/Trade.h
+        src/execution/ExecutionTrade.h
         src/execution/OrderEvent.h
         src/execution/MatchingResult.h
         src/execution/OrderBook.h
         src/execution/OrderBook.cpp
+        src/execution/ExecutionRequest.h
+        src/execution/OrderIdGenerator.cpp
+        src/execution/OrderIdGenerator.h
+        src/execution/ExecutionManager.h
+        src/execution/ExecutionManager.cpp
+        src/execution/ExecutionAdapter.cpp
+        src/execution/ExecutionAdapter.h
 
 )
 

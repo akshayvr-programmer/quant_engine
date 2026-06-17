@@ -16,6 +16,9 @@
 #include "strategy/PairParameters.h"
 #include "strategy/PairsTradingStrategy.h"
 #include "config/PairParameterLoader.h"
+#include "execution/ExecutionManager.h"
+#include "execution/ExecutionAdapter.h"
+
 
 int main() {
 
@@ -58,6 +61,8 @@ int main() {
     
 
     HistoricalDataPlayer player("../src/config/KO_PEP_engine.csv");
+
+
 
 
 
@@ -148,6 +153,51 @@ int main() {
 
 
     std::cout << "===== ENGINE END =====" << std::endl;
+
+    ExecutionManager manager;
+    ExecutionRequest sellLiquidity{
+        "AAPL",
+        Side::SELL,
+        100,
+        OrderType::LIMIT,
+        100
+
+
+    };
+
+    manager.submitRequest(sellLiquidity);
+
+    Signal signal = Signal::BUY;
+
+    auto request = ExecutionAdapter::signalToRequest(signal, "AAPL", 100);
+
+    if (request) {
+        MatchingResult result = manager.submitRequest(*request);
+
+        std::cout
+        << "\nTrades\n";
+
+        for (const auto& trade : result.trades) {
+            std::cout
+            <<trade.quantity
+            << "@"
+            << trade.price
+            << "\n";
+
+        }
+
+        for (const auto& event: result.events) {
+            std::cout
+            << event.orderId
+            << " "
+
+            << static_cast<int>(event.type)
+            << "\n";
+
+        }
+
+    }
+
 
     return 0;
 }

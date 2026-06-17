@@ -196,7 +196,7 @@ void OrderBook::processMarketSell(Order order, MatchingResult& result) {
         restingOrder.remainingQuantity -= tradeqty;
         order.remainingQuantity -= tradeqty;
 
-        Trade trade {
+        ExecutionTrade trade {
             order.id,
             restingOrder.id,
             bestBidPrice,
@@ -235,7 +235,7 @@ void OrderBook::processMarketBuy(Order order, MatchingResult& result) {
         order.remainingQuantity -= tradeqty;
         restingOrder.remainingQuantity -= tradeqty;
 
-        Trade trade {
+        ExecutionTrade trade {
             order.id,
             restingOrder.id,
             bestAskPrice,
@@ -295,26 +295,42 @@ void OrderBook::processLimitBuy(
         order.remainingQuantity -= tradeQty;
         restingOrder.remainingQuantity -= tradeQty;
 
-        if (order.remainingQuantity > 0) {
+
+        if (restingOrder.remainingQuantity > 0)
+        {
+
             result.events.push_back({
-                order.id,
+
+                restingOrder.id,
+
                 OrderEventType::PARTIALLY_FILLED,
+
                 tradeQty,
-                order.remainingQuantity
+
+                restingOrder.remainingQuantity
+
             });
 
         }
-        if (order.remainingQuantity == 0) {
+        else
+        {
+
             result.events.push_back({
-                order.id,
+
+                restingOrder.id,
+
                 OrderEventType::FILLED,
+
                 tradeQty,
+
                 0
 
             });
-        }
 
-        Trade trade {
+        }
+        
+
+        ExecutionTrade trade {
             order.id,
             restingOrder.id,
             bestAskPrice,
@@ -380,16 +396,41 @@ void OrderBook::processLimitSell(
         order.remainingQuantity -= tradeQty;
         restingOrder.remainingQuantity -= tradeQty;
 
-        if (order.remainingQuantity > 0) {
+        if (restingOrder.remainingQuantity > 0)
+        {
 
-            result.events.push_back({order.id, OrderEventType::PARTIALLY_FILLED, tradeQty, order.remainingQuantity});
+            result.events.push_back({
+
+                restingOrder.id,
+
+                OrderEventType::PARTIALLY_FILLED,
+
+                tradeQty,
+
+                restingOrder.remainingQuantity
+
+            });
 
         }
-        if (order.remainingQuantity == 0) {
-            result.events.push_back({order.id, OrderEventType::FILLED, tradeQty, 0});
+        else
+        {
+
+            result.events.push_back({
+
+                restingOrder.id,
+
+                OrderEventType::FILLED,
+
+                tradeQty,
+
+                0
+
+            });
+
         }
+
         
-        Trade trade {
+        ExecutionTrade trade {
         order.id,
         restingOrder.id,
         bestBidPrice,

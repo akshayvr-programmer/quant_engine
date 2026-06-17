@@ -2,7 +2,7 @@
 
 #include "Order.h"
 
-struct Trade {
+struct ExecutionTrade {
     OrderId agressorOrderId;
     OrderId restingOrderId;
     Price price;
