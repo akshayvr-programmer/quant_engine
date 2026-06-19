@@ -6,9 +6,15 @@
 #include "OrderIdGenerator.h"
 #include "ExecutionRequest.h"
 #include "MatchingResult.h"
+#include "../risk/RiskManager.h"
+#include "../portfolio/PortfolioManager.h"
 
 class ExecutionManager {
 private:
+    PortfolioManager portfolio;
+
+    RiskManager risk;
+
 
     std::unordered_map<std::string, OrderBook> books;
 
@@ -18,6 +24,8 @@ private:
 
 public:
     ExecutionManager();
+
+    PortfolioManager& getPortfolio();
 
     MatchingResult submitRequest(const ExecutionRequest& request);
 

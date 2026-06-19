@@ -35,6 +35,55 @@ submitRequest(
 {
 
     MatchingResult result;
+    RiskResult riskResult = risk.validateRequest(request, portfolio);
+        if(
+
+    riskResult.decision
+
+    !=
+
+    RiskDecision::
+
+    APPROVED
+
+    )
+
+        {
+
+
+
+
+                result.events.push_back(
+
+                {
+
+                0,
+
+
+                OrderEventType::
+
+                REJECTED,
+
+
+                0,
+
+
+                0
+
+
+                }
+
+                );
+
+
+
+
+                return result;
+
+
+        }
+
+
     OrderIdGenerator generator;
 
 
@@ -103,6 +152,9 @@ submitRequest(
             result.trades
     )
     {
+
+        bool isBuy = request.side==Side::BUY;
+        portfolio.updateFromTrade(trade, request.symbol, isBuy);
         executedTrades.push_back(
                 trade
         );
@@ -124,4 +176,9 @@ submitRequest(
 
     return result;
 
+}
+
+
+PortfolioManager &ExecutionManager::getPortfolio() {
+        return portfolio;
 }

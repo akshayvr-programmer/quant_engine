@@ -4,8 +4,31 @@ project(QuantEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 
+
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+##############################################
+# GoogleTest
+##############################################
+
+include(FetchContent)
+
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
+)
+
+FetchContent_MakeAvailable(googletest)
+include(GoogleTest)
+
+##############################################
+# Engine
+##############################################
+
 add_executable(
         engine
+
         src/main.cpp
         "src/market data/Tick.cpp"
         "src/market data/Tick.h"
@@ -63,27 +86,42 @@ add_executable(
         src/execution/ExecutionManager.cpp
         src/execution/ExecutionAdapter.cpp
         src/execution/ExecutionAdapter.h
+        src/portfolio/PortfolioManager.cpp
+        src/portfolio/PortfolioManager.h
+        src/portfolio/Holding.h
+        src/risk/RiskManager.cpp
+        src/risk/RiskManager.h
+        src/risk/RiskDecision.h
+        src/risk/RiskResult.h
 
+
+        # UI
+
+
+        # Existing files...
+        # Keep everything else you already have
 )
 
-include(FetchContent)
 
-FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
-)
 
-FetchContent_MakeAvailable(googletest)
-include(GoogleTest)
 
+
+##############################################
+# Tests
+##############################################
 
 add_executable(
         OrderBookTests
+
         tests/OrderBookTests.cpp
 
         src/execution/OrderBook.cpp
 )
+
 target_link_libraries(
         OrderBookTests
+
+        PRIVATE
+
         GTest::gtest_main
 )

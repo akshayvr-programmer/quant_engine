@@ -18,9 +18,14 @@
 #include "config/PairParameterLoader.h"
 #include "execution/ExecutionManager.h"
 #include "execution/ExecutionAdapter.h"
-
-
+#include "portfolio/Holding.h"
+#include "portfolio/PortfolioManager.h"
+#include "risk/RiskManager.h"
 int main() {
+
+
+
+
 
     std::cout << "===== ENGINE START =====" << std::endl;
 
@@ -197,6 +202,72 @@ int main() {
         }
 
     }
+
+    Holding p = manager.getPortfolio().getHolding("AAPL");
+
+
+
+    std::cout
+
+
+    <<"Qty : "
+
+
+    <<p.quantity
+
+
+    <<'\n';
+
+
+
+    std::cout
+
+
+    <<"Avg : "
+
+
+    <<p.averageCost
+
+
+    <<'\n';
+
+
+
+    std::cout
+
+
+    <<"Cash : "
+
+
+    <<manager
+
+    .getPortfolio()
+
+    .getCash()
+
+
+    <<'\n';
+
+
+
+    std::cout
+
+
+    <<"Realized : "
+
+
+    <<p.realizedPnL
+
+
+    <<'\n';
+
+    
+
+
+
+
+
+
 
 
     return 0;
