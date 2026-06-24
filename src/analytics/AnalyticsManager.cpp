@@ -5,6 +5,9 @@ void AnalyticsManager::addSnapshot(
 )
 {
     snapshots.push_back(snapshot);
+
+
+
 }
 
 const std::vector<EngineSnapshot>&

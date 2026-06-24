@@ -5,11 +5,13 @@
 #pragma once
 #include <vector>
 #include  "../export/EngineSnapshot.h"
+#include "../net/EventPublisher.h"
 
 class AnalyticsManager {
 
 private:
     std::vector<EngineSnapshot> snapshots;
+
 
 public:
     void addSnapshot(const EngineSnapshot& snapshot);

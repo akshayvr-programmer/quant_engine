@@ -20,7 +20,16 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(googletest)
+FetchContent_Declare(
+        json
+        URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+)
+FetchContent_MakeAvailable(json)
+
 include(GoogleTest)
+
+# add to add_executable(engine ...):  src/net/EventPublisher.h  src/net/EventPublisher.cpp
+
 
 ##############################################
 # Engine
@@ -95,6 +104,10 @@ add_executable(
         src/risk/RiskResult.h
         src/broker/PaperBroker.cpp
         src/broker/PaperBroker.h
+        src/export/DashboardExporter.cpp
+        src/export/DashboardExporter.h
+        src/net/EventPublisher.cpp
+        src/net/EventPublisher.h
 
 
         # UI
@@ -104,7 +117,17 @@ add_executable(
         # Keep everything else you already have
 )
 
+target_link_libraries(
 
+        engine
+
+        PRIVATE
+
+        Qt6::Widgets
+
+        nlohmann_json::nlohmann_json
+
+)
 
 
 

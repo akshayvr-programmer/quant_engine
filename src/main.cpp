@@ -21,6 +21,7 @@
 #include "portfolio/Holding.h"
 #include "portfolio/PortfolioManager.h"
 #include "risk/RiskManager.h"
+#include "export/DashboardExporter.h"
 int main() {
 
 
@@ -261,7 +262,14 @@ int main() {
 
     <<'\n';
 
-    
+    std::vector<Holding> holdings = { manager.getPortfolio().getHolding("AAPL") };
+    DashboardExporter::write(
+        "../frontend/public/dashboard.json",
+        manager.getPortfolio(),
+        holdings,
+        analyticsManager.getSnapshots()
+    );
+
 
 
 
