@@ -93,6 +93,8 @@ add_executable(
         src/risk/RiskManager.h
         src/risk/RiskDecision.h
         src/risk/RiskResult.h
+        src/broker/PaperBroker.cpp
+        src/broker/PaperBroker.h
 
 
         # UI
