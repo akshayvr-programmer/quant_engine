@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-
+#include <string>
 using Price = std::int64_t;
 using Quantity = std::uint64_t;
 using OrderId = std::uint64_t;
@@ -20,6 +20,8 @@ enum class OrderType {
 struct Order {
 
     OrderId id;
+
+    std::string symbol;
 
     Side side;
 

@@ -25,6 +25,9 @@ public:
     double getExposure() const;
     double getRealizedPnL() const;
 
+    const std::unordered_map<std::string, Holding>& getPositions() const;
+    
+
 
     double getNetLiquidationValue() const;
 

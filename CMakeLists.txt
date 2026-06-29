@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+
 
 ##############################################
 # GoogleTest
@@ -108,6 +109,22 @@ add_executable(
         src/export/DashboardExporter.h
         src/net/EventPublisher.cpp
         src/net/EventPublisher.h
+        src/api/HttpServer.cpp
+        src/api/HttpServer.h
+        src/api/HttpSession.cpp
+        src/api/HttpSession.h
+        src/api/Router.cpp
+        src/api/Router.h
+        src/api/JsonSerializer.cpp
+        src/api/JsonSerializer.h
+        src/api/WebSocketSession.cpp
+        src/api/WebSocketSession.h
+        src/api/dto/AccountSnapshot.cpp
+        src/api/dto/AccountSnapshot.h
+        src/api/dto/PositionSnapshot.cpp
+        src/api/dto/PositionSnapshot.h
+        src/api/dto/TradeSnapshot.cpp
+        src/api/dto/TradeSnapshot.h
 
 
         # UI
@@ -117,15 +134,20 @@ add_executable(
         # Keep everything else you already have
 )
 
+find_package(Boost REQUIRED COMPONENTS system)
+
 target_link_libraries(
 
         engine
 
         PRIVATE
+        Boost::system
 
-        Qt6::Widgets
+
 
         nlohmann_json::nlohmann_json
+        ws2_32
+
 
 )
 

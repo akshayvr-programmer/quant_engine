@@ -1,4 +1,5 @@
 #include "OrderBook.h"
+#include <chrono>
 
 MatchingResult OrderBook::submitOrder(const Order &order) {
 
@@ -196,13 +197,18 @@ void OrderBook::processMarketSell(Order order, MatchingResult& result) {
         restingOrder.remainingQuantity -= tradeqty;
         order.remainingQuantity -= tradeqty;
 
-        ExecutionTrade trade {
+        ExecutionTrade trade{
             order.id,
             restingOrder.id,
-            bestBidPrice,
-            tradeqty
-
-
+            order.symbol,
+            order.side,
+            order.price,
+            tradeqty,
+            static_cast<std::uint64_t>(
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::system_clock::now().time_since_epoch()
+                ).count()
+            )
         };
 
         result.trades.push_back(trade);
@@ -234,15 +240,18 @@ void OrderBook::processMarketBuy(Order order, MatchingResult& result) {
 
         order.remainingQuantity -= tradeqty;
         restingOrder.remainingQuantity -= tradeqty;
-
-        ExecutionTrade trade {
+        ExecutionTrade trade{
             order.id,
             restingOrder.id,
-            bestAskPrice,
-            tradeqty
-
-
-
+            order.symbol,
+            order.side,
+            order.price,
+            tradeqty,
+            static_cast<std::uint64_t>(
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::system_clock::now().time_since_epoch()
+                ).count()
+            )
         };
 
         result.trades.push_back(trade);
@@ -330,11 +339,18 @@ void OrderBook::processLimitBuy(
         }
         
 
-        ExecutionTrade trade {
+        ExecutionTrade trade{
             order.id,
             restingOrder.id,
-            bestAskPrice,
-            tradeQty
+            order.symbol,
+            order.side,
+            order.price,
+            tradeQty,
+            static_cast<std::uint64_t>(
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::system_clock::now().time_since_epoch()
+                ).count()
+            )
         };
 
         result.trades.push_back(trade);
@@ -430,12 +446,18 @@ void OrderBook::processLimitSell(
         }
 
         
-        ExecutionTrade trade {
-        order.id,
-        restingOrder.id,
-        bestBidPrice,
-        tradeQty
-
+        ExecutionTrade trade{
+            order.id,
+            restingOrder.id,
+            order.symbol,
+            order.side,
+            order.price,
+            tradeQty,
+            static_cast<std::uint64_t>(
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::system_clock::now().time_since_epoch()
+                ).count()
+            )
         };
 
 

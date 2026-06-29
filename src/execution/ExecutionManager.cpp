@@ -111,23 +111,19 @@ submitRequest(
 
 
 
-    Order order{
+    Order order {
 
-        id,
+            id,
+            request.symbol,
+            request.side,
+            request.orderType,
+            price,
+            request.quantity,
+            request.quantity,
+            ts
 
-        request.side,
 
-        request.orderType,
-
-        price,
-
-        request.quantity,
-
-        request.quantity,
-
-        ts
-
-};
+    };
 
 
 

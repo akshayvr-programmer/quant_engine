@@ -1,15 +1,18 @@
-//
-// Created by aksha on
-
 #pragma once
+
 #include "../execution/ExecutionManager.h"
 #include "../portfolio/PortfolioManager.h"
-class PaperBroker {
-
+#include "../api/dto/AccountSnapshot.h"
+#include "../api/dto/PositionSnapshot.h"
+#include "../api/dto/TradeSnapshot.h"
+class PaperBroker
+{
 private:
+
     ExecutionManager engine;
 
 public:
+
     PaperBroker();
 
     MatchingResult placeOrder(const ExecutionRequest& request);
@@ -19,10 +22,17 @@ public:
     PortfolioManager& getPortfolio();
 
     double getCash();
+
     double getExposure();
+
     double getPnL();
+
     std::vector<ExecutionTrade> getTrades();
 
+    std::vector<PositionSnapshot> getPositions();
+    std::vector<TradeSnapshot> getTradeHistory();
+
+
+    // NEW
+    AccountSnapshot getAccount();
 };
-
-

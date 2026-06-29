@@ -97,3 +97,9 @@ double PortfolioManager::getExposure() const
 
     return exposure;
 }
+
+const std::unordered_map<std::string, Holding>&
+PortfolioManager::getPositions() const
+{
+    return positions;
+}
