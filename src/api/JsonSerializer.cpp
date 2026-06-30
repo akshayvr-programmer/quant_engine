@@ -62,3 +62,60 @@ JsonSerializer::serialize(
     return array;
 }
 
+OrderRequest
+JsonSerializer::deserializeOrder(
+    const std::string& body
+)
+{
+    auto json =
+        nlohmann::json::parse(body);
+
+    OrderRequest request;
+
+    request.symbol =
+        json["symbol"];
+
+    request.side =
+        json["side"];
+
+    request.type =
+        json["type"];
+
+    request.quantity =
+        json["quantity"];
+
+    request.price =
+        json["price"];
+
+    return request;
+}
+
+nlohmann::json
+JsonSerializer::serialize(
+    const OrderBookSnapshot& snapshot
+)
+{
+    nlohmann::json result;
+
+    result["bids"] = nlohmann::json::array();
+    result["asks"] = nlohmann::json::array();
+
+    for(const auto& level : snapshot.bids)
+    {
+        result["bids"].push_back({
+            {"price", level.price},
+            {"quantity", level.quantity}
+        });
+    }
+
+    for(const auto& level : snapshot.asks)
+    {
+        result["asks"].push_back({
+            {"price", level.price},
+            {"quantity", level.quantity}
+        });
+    }
+
+    return result;
+}
+

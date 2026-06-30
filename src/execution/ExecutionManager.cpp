@@ -178,3 +178,41 @@ submitRequest(
 PortfolioManager &ExecutionManager::getPortfolio() {
         return portfolio;
 }
+
+const OrderBook&
+ExecutionManager::getOrderBook(
+    const std::string& symbol
+) const
+{
+        return books.at(symbol);
+}
+
+void ExecutionManager::addLiquidity(
+    const ExecutionRequest& request
+)
+{
+        OrderIdGenerator generator;
+
+        OrderId id = generator.nextId();
+
+        Timestamp ts =
+            duration_cast<nanoseconds>(
+                steady_clock::now().time_since_epoch()
+            ).count();
+
+        Price price =
+            request.limitPrice.value_or(0);
+
+        Order order{
+                id,
+                request.symbol,
+                request.side,
+                request.orderType,
+                price,
+                request.quantity,
+                request.quantity,
+                ts
+            };
+
+        books[request.symbol].submitOrder(order);
+}

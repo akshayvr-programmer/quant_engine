@@ -98,3 +98,98 @@ PaperBroker::getTradeHistory()
 
     return snapshots;
 }
+
+MatchingResult
+PaperBroker::placeOrder(
+    const OrderRequest& request
+)
+{
+    ExecutionRequest executionRequest;
+
+    executionRequest.symbol = request.symbol;
+
+    executionRequest.quantity = request.quantity;
+
+    executionRequest.limitPrice = request.price;
+
+    executionRequest.side =
+        request.side == "BUY"
+        ? Side::BUY
+        : Side::SELL;
+
+    executionRequest.orderType =
+        request.type == "MARKET"
+        ? OrderType::MARKET
+        : OrderType::LIMIT;
+
+    return engine.submitRequest(executionRequest);
+}
+
+OrderBookSnapshot
+PaperBroker::getOrderBook(
+    const std::string& symbol
+) const
+{
+    OrderBookSnapshot snapshot;
+
+    const auto& book =
+        engine.getOrderBook(symbol);
+
+    // Bids
+    for(const auto& [price, queue] : book.getBids())
+    {
+        int totalQuantity = 0;
+
+        for(const auto& order : queue)
+        {
+            totalQuantity += order.remainingQuantity;
+        }
+
+        OrderBookLevel level;
+        level.price = price;
+        level.quantity = totalQuantity;
+        snapshot.bids.push_back(level);
+
+    }
+
+    // Asks
+    for(const auto& [price, queue] : book.getAsks())
+    {
+        int totalQuantity = 0;
+
+        for(const auto& order : queue)
+        {
+            totalQuantity += order.remainingQuantity;
+        }
+        OrderBookLevel level;
+        level.price = price;
+        level.quantity = totalQuantity;
+
+        snapshot.asks.push_back(level);
+
+
+
+    }
+
+    return snapshot;
+}
+
+void PaperBroker::seedLiquidity(
+    const OrderRequest& request
+)
+{
+    ExecutionRequest executionRequest;
+
+    executionRequest.symbol = request.symbol;
+    executionRequest.quantity = request.quantity;
+    executionRequest.limitPrice = request.price;
+
+    executionRequest.side =
+        request.side == "BUY"
+        ? Side::BUY
+        : Side::SELL;
+
+    executionRequest.orderType = OrderType::LIMIT;
+
+    engine.addLiquidity(executionRequest);
+}

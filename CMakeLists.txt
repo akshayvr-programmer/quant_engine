@@ -125,6 +125,10 @@ add_executable(
         src/api/dto/PositionSnapshot.h
         src/api/dto/TradeSnapshot.cpp
         src/api/dto/TradeSnapshot.h
+        src/api/dto/OrderRequest.cpp
+        src/api/dto/OrderRequest.h
+        src/api/dto/OrderBookLevel.h
+        src/api/dto/OrderBookSnapshot.h
 
 
         # UI

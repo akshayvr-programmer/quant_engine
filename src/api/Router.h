@@ -23,6 +23,7 @@ public:
 
     std::string route(
         HttpMethod method,
-        const std::string& path
+        const std::string& path,
+        const std::string& body
     );
 };

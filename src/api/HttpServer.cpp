@@ -33,23 +33,44 @@ void HttpServer::start()
 
         http::read(socket, buffer, request);
 
-        std::string body =
+        // Convert Beast method -> our enum
+        HttpMethod method;
+
+        switch (request.method())
+        {
+            case http::verb::get:
+                method = HttpMethod::GET;
+                break;
+
+            case http::verb::post:
+                method = HttpMethod::POST;
+                break;
+
+            default:
+                method = HttpMethod::GET;
+                break;
+        }
+
+        // Router returns JSON as a string
+        std::string responseBody =
             router.route(
-                HttpMethod::GET,
-                std::string(request.target())
+                method,
+                std::string(request.target()),
+                request.body()
             );
 
-        http::response<http::string_body> response{
+        // Build HTTP response
+        http::response<http::string_body> response(
             http::status::ok,
             request.version()
-        };
+        );
 
         response.set(
             http::field::content_type,
             "application/json"
         );
 
-        response.body() = body;
+        response.body() = responseBody;
 
         response.prepare_payload();
 

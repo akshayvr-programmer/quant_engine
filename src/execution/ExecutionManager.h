@@ -33,4 +33,10 @@ public:
 
     const std::vector<OrderEvent>& getEvents() const;
 
+    const OrderBook& getOrderBook(
+    const std::string& symbol) const;
+
+    void addLiquidity(const ExecutionRequest& request);
+
+
 };

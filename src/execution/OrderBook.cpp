@@ -202,7 +202,7 @@ void OrderBook::processMarketSell(Order order, MatchingResult& result) {
             restingOrder.id,
             order.symbol,
             order.side,
-            order.price,
+            bestBidPrice,
             tradeqty,
             static_cast<std::uint64_t>(
                 std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -245,7 +245,7 @@ void OrderBook::processMarketBuy(Order order, MatchingResult& result) {
             restingOrder.id,
             order.symbol,
             order.side,
-            order.price,
+            bestAskPrice,
             tradeqty,
             static_cast<std::uint64_t>(
                 std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -489,6 +489,18 @@ void OrderBook::processLimitSell(
         orderIndex[order.id] = {order.side, order.price, order.id};
 
     }
+}
+
+const OrderBook::BidBook&
+OrderBook::getBids() const
+{
+    return bids;
+}
+
+const OrderBook::AskBook&
+OrderBook::getAsks() const
+{
+    return asks;
 }
 
 

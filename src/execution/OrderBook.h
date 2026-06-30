@@ -25,23 +25,27 @@ private:
     void processMarketBuy(Order order, MatchingResult& result);
     void processMarketSell(Order order, MatchingResult& result);
 
-
-
 public:
 
+    using OrderQueue = std::deque<Order>;
+
+    using BidBook = std::map<Price, OrderQueue, std::greater<>>;
+    using AskBook = std::map<Price, OrderQueue>;
+
     MatchingResult submitOrder(const Order& order);
+
     bool cancelOrder(OrderId orderId);
 
     std::optional<Price> bestBid() const;
     std::optional<Price> bestAsk() const;
 
+    const BidBook& getBids() const;
+    const AskBook& getAsks() const;
+
 private:
-    using OrderQueue = std::deque<Order>;
-    std::map<Price, OrderQueue, std::greater<>>bids;
-    std::map<Price, OrderQueue>asks;
+
+    BidBook bids;
+    AskBook asks;
+
     std::unordered_map<OrderId, OrderLocation> orderIndex;
-
-
-
-
 };

@@ -52,16 +52,25 @@ void PortfolioManager::updateFromTrade(const ExecutionTrade &trade, const std::s
 
     }
 
-    else {
-        double pnl = (tradePrice -pos.quantity)*tradeQuantity;
+    else
+    {
+        double pnl =
+            (tradePrice - pos.averageCost)
+            * tradeQuantity;
+
         pos.realizedPnL += pnl;
-        cash += tradeQuantity*tradePrice;
 
-        if (pos.quantity == 0) {
-            pos.averageCost = 0;
+        cash += tradeQuantity * tradePrice;
+
+        pos.quantity -= tradeQuantity;
+
+        if (pos.quantity == 0)
+        {
+            pos.averageCost = 0.0;
         }
-
     }
+
+
 }
 
 void PortfolioManager::marktoMarket(const std::string &symbol, Price currentPrice) {

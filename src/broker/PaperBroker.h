@@ -5,6 +5,8 @@
 #include "../api/dto/AccountSnapshot.h"
 #include "../api/dto/PositionSnapshot.h"
 #include "../api/dto/TradeSnapshot.h"
+#include "../api/dto/OrderRequest.h"
+#include "../api/dto/OrderBookSnapshot.h"
 class PaperBroker
 {
 private:
@@ -31,6 +33,14 @@ public:
 
     std::vector<PositionSnapshot> getPositions();
     std::vector<TradeSnapshot> getTradeHistory();
+
+    MatchingResult placeOrder(const OrderRequest& request);
+
+    OrderBookSnapshot getOrderBook(
+    const std::string& symbol) const;
+
+    void seedLiquidity(const OrderRequest& request);
+    
 
 
     // NEW

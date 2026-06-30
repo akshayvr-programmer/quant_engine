@@ -277,35 +277,7 @@ int main() {
     PaperBroker broker;
 
     HttpServer server(broker);
-
-    // Sell order to provide liquidity
-    broker.placeOrder({
-        "AAPL",
-        Side::SELL,
-        100,
-        OrderType::LIMIT,
-        100
-    });
-
-    // Buy order that matches it
-    broker.placeOrder({
-        "AAPL",
-        Side::BUY,
-        100,
-        OrderType::MARKET,
-        100
-    });
-
-    ExecutionRequest requestt{
-        "AAPL",
-        Side::BUY,
-        100,
-        OrderType::MARKET,
-        100
-    };
-
-    broker.placeOrder(requestt);
-
+    
 
 
 

@@ -4,6 +4,8 @@
 #include "dto/PositionSnapshot.h"
 #include "dto/AccountSnapshot.h"
 #include "dto/TradeSnapshot.h"
+#include "dto/OrderRequest.h"
+#include "dto/OrderBookSnapshot.h"
 class JsonSerializer
 {
 public:
@@ -16,6 +18,13 @@ public:
 
     static nlohmann::json serialize(
     const std::vector<TradeSnapshot>& trades);
+
+    static OrderRequest deserializeOrder(
+    const std::string& body);
+
+    static nlohmann::json serialize(
+    const OrderBookSnapshot& snapshot);
+
 
 
 
