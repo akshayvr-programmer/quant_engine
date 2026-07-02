@@ -33,6 +33,25 @@ void HttpServer::start()
 
         http::read(socket, buffer, request);
 
+        if (request.method() == http::verb::options)
+        {
+            http::response<http::string_body> response(
+                http::status::no_content,
+                request.version()
+            );
+
+            response.set(http::field::access_control_allow_origin, "*");
+            response.set(http::field::access_control_allow_methods, "GET, POST, OPTIONS");
+            response.set(http::field::access_control_allow_headers, "Content-Type");
+
+            response.prepare_payload();
+
+            http::write(socket, response);
+
+            continue;
+        }
+        
+
         // Convert Beast method -> our enum
         HttpMethod method;
 
@@ -69,6 +88,18 @@ void HttpServer::start()
             http::field::content_type,
             "application/json"
         );
+
+        response.set(
+    http::field::access_control_allow_origin,
+    "*");
+
+        response.set(
+            http::field::access_control_allow_methods,
+            "GET, POST, OPTIONS");
+
+        response.set(
+            http::field::access_control_allow_headers,
+            "Content-Type");
 
         response.body() = responseBody;
 

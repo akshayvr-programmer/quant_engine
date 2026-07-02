@@ -89,7 +89,7 @@ export default function Sidebar({
           </span>
         </div>
         <div className="mt-1 pl-[18px] text-[11px] text-zinc-500">
-          {live ? "Live · dashboard.json" : "Awaiting engine export"}
+          {live ? "Live · REST :8080" : "Awaiting engine"}
         </div>
       </div>
     </aside>

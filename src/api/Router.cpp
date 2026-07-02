@@ -9,37 +9,55 @@ std::string Router::route(
     HttpMethod method,
     const std::string& path,
     const std::string& body
-
 )
 {
+    // ============================================================
+    // GET Routes
+    // ============================================================
+
     if (method == HttpMethod::GET)
     {
         if (path == "/account")
         {
-            auto snapshot = broker.getAccount();
+            return JsonSerializer::serialize(
+                broker.getAccount()
+            ).dump(4);
+        }
 
-            return JsonSerializer::serialize(snapshot).dump(4);
+        if (path == "/positions")
+        {
+            return JsonSerializer::serialize(
+                broker.getPositions()
+            ).dump(4);
+        }
+
+        if (path == "/trades")
+        {
+            return JsonSerializer::serialize(
+                broker.getTradeHistory()
+            ).dump(4);
+        }
+
+        const std::string bookPrefix = "/book/";
+
+        if (path.rfind(bookPrefix, 0) == 0)
+        {
+            std::string symbol =
+                path.substr(bookPrefix.length());
+
+            return JsonSerializer::serialize(
+                broker.getOrderBook(symbol)
+            ).dump(4);
         }
     }
 
-    if (method == HttpMethod::GET && path == "/positions")
-    {
-        return JsonSerializer::serialize(
-            broker.getPositions()
-        ).dump(4);
-    }
+    // ============================================================
+    // POST Routes
+    // ============================================================
 
-    if (method == HttpMethod::GET &&
-    path == "/trades")
+    if (method == HttpMethod::POST)
     {
-        return JsonSerializer::serialize(
-            broker.getTradeHistory()
-        ).dump(4);
-    }
-
-    if(method == HttpMethod::POST)
-    {
-        if(path == "/order")
+        if (path == "/order")
         {
             OrderRequest request =
                 JsonSerializer::deserializeOrder(body);
@@ -58,38 +76,32 @@ std::string Router::route(
                 R"(
 })";
         }
-    }
 
-    if (method == HttpMethod::POST &&
-    path == "/seed")
-    {
-        OrderRequest request =
-            JsonSerializer::deserializeOrder(body);
+        if (path == "/seed")
+        {
+            OrderRequest request =
+                JsonSerializer::deserializeOrder(body);
 
-        request.type = "LIMIT";
+            request.type = "LIMIT";
 
-        broker.seedLiquidity(request);
+            broker.seedLiquidity(request);
 
-        return R"(
+            return R"(
 {
     "success": true,
     "message": "Liquidity Added"
 }
 )";
-    }
-
-    if(method == HttpMethod::GET)
-    {
-
-
-        if(path == "/book/AAPL")
-        {
-            return JsonSerializer::
-                serialize(
-                    broker.getOrderBook("AAPL")
-                ).dump(4);
         }
     }
 
-    return R"({"error":"Not Found"})";
+    // ============================================================
+    // Unknown Route
+    // ============================================================
+
+    return R"(
+{
+    "error": "Not Found"
+}
+)";
 }

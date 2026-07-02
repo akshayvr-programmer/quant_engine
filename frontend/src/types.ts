@@ -149,6 +149,9 @@ export interface BrokerAccount {
   buyingPower: number;
   cash: number;
   equity: number;
+  exposure: number;
+  realizedPnl: number;
+  unrealizedPnl: number;
   openOrders: OrderEvent[];
 }
 

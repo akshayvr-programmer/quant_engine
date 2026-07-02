@@ -23,7 +23,7 @@ const TITLES: Record<ViewId, { title: string; sub: string }> = {
 
 export default function App() {
   const [view, setView] = useState<ViewId>("overview");
-  const { data, live } = usePlatform();
+  const { data, live, loading, error, submitOrder } = usePlatform();
   const t = TITLES[view];
 
   return (
@@ -47,6 +47,12 @@ export default function App() {
           </div>
         </header>
 
+        {error && !loading && (
+          <div className="border-b border-amber-400/20 bg-amber-400/5 px-8 py-2 text-[12px] text-amber-300">
+            Engine unreachable — showing last known data. ({error})
+          </div>
+        )}
+
         <div key={view} className="animate-fade-rise px-8 py-6">
           {view === "overview" && <OverviewView data={data} />}
           {view === "signals" && <SignalsView data={data} />}
@@ -54,7 +60,7 @@ export default function App() {
           {view === "strategies" && <StrategiesView data={data} />}
           {view === "trades" && <TradesView data={data} />}
           {view === "risk" && <RiskView data={data} />}
-          {view === "broker" && <BrokerView data={data} />}
+          {view === "broker" && <BrokerView data={data} onSubmitOrder={submitOrder} />}
         </div>
       </main>
     </div>

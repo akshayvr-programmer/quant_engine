@@ -255,6 +255,9 @@ export const platformData: PlatformData = {
     buyingPower: 1_998_864,
     cash: 999_432,
     equity: 1_011_932,
+    exposure: 12_500,
+    realizedPnl: 0,
+    unrealizedPnl: 124,
     openOrders: [
       { id: "o1", time: stampISO(89, 14, 56, 3), orderId: "#10481", type: "NEW", symbol: "AAPL", side: "SELL", price: 186.2, size: 150 },
       { id: "o2", time: stampISO(89, 14, 40, 18), orderId: "#10475", type: "NEW", symbol: "MSFT", side: "BUY", price: 419.5, size: 50 },

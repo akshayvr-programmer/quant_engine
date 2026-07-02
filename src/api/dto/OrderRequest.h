@@ -1,12 +1,16 @@
 #pragma once
-
+#include "../../execution/Order.h"
 #include <string>
+#include <optional>
 
-struct OrderRequest {
+
+struct OrderRequest
+{
     std::string symbol;
     std::string side;
     std::string type;
-    int quantity = 0;
-    double price = 0;
-    
+
+    Quantity quantity;
+
+    std::optional<Price> price;
 };

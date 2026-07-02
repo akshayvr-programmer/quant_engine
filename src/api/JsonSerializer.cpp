@@ -1,5 +1,5 @@
 #include "JsonSerializer.h"
-
+#include "../execution/Order.h"
 nlohmann::json JsonSerializer::serialize(
     const AccountSnapshot& account
 )
@@ -84,8 +84,14 @@ JsonSerializer::deserializeOrder(
     request.quantity =
         json["quantity"];
 
-    request.price =
-        json["price"];
+    if (
+    json.contains("price") &&
+    !json["price"].is_null()
+)
+    {
+        request.price =
+            json["price"].get<Price>();
+    }
 
     return request;
 }

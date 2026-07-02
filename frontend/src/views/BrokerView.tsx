@@ -1,8 +1,10 @@
 import { Building2, CheckCircle2, CircleSlash } from "lucide-react";
 import type { PlatformData, OrderEventType } from "../types";
+import type { OrderRequest, OrderResponse } from "../services/api";
 import PositionsTable from "../components/PositionsTable";
+import OrderTicket from "../components/OrderTicket";
 import { Card, PanelHeader } from "../components/ui/Card";
-import { money, count, price as fmtPrice, clockTime } from "../lib/format";
+import { money, count, price as fmtPrice, clockTime, signedMoney, toneClass } from "../lib/format";
 
 const EVENT_CLS: Record<OrderEventType, string> = {
   NEW: "bg-zinc-700/40 text-zinc-300",
@@ -11,7 +13,13 @@ const EVENT_CLS: Record<OrderEventType, string> = {
   CANCEL: "bg-rose-300/10 text-rose-300",
 };
 
-export default function BrokerView({ data }: { data: PlatformData }) {
+export default function BrokerView({
+  data,
+  onSubmitOrder,
+}: {
+  data: PlatformData;
+  onSubmitOrder: (order: OrderRequest) => Promise<OrderResponse>;
+}) {
   const b = data.broker;
   return (
     <div className="space-y-5">
@@ -37,19 +45,23 @@ export default function BrokerView({ data }: { data: PlatformData }) {
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-zinc-800 bg-zinc-800 sm:grid-cols-3">
+        <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-zinc-800 bg-zinc-800 sm:grid-cols-3 lg:grid-cols-5">
           {[
-            { l: "Buying Power", v: money(b.buyingPower) },
-            { l: "Cash", v: money(b.cash) },
-            { l: "Equity", v: money(b.equity) },
+            { l: "Buying Power", v: money(b.buyingPower), c: "text-zinc-100" },
+            { l: "Cash", v: money(b.cash), c: "text-zinc-100" },
+            { l: "Exposure", v: money(b.exposure), c: "text-zinc-100" },
+            { l: "Realized PnL", v: signedMoney(b.realizedPnl), c: toneClass(b.realizedPnl) },
+            { l: "Unrealized PnL", v: signedMoney(b.unrealizedPnl), c: toneClass(b.unrealizedPnl) },
           ].map((s) => (
             <div key={s.l} className="bg-zinc-900 px-4 py-4">
               <div className="text-[11px] uppercase tracking-[0.08em] text-zinc-500">{s.l}</div>
-              <div className="nums mt-1.5 text-xl font-semibold tracking-tight text-zinc-100">{s.v}</div>
+              <div className={`nums mt-1.5 text-xl font-semibold tracking-tight ${s.c}`}>{s.v}</div>
             </div>
           ))}
         </div>
       </Card>
+
+      <OrderTicket onSubmit={onSubmitOrder} />
 
       <Card pad={false}>
         <div className="border-b border-zinc-800 px-5 py-4">

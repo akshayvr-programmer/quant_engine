@@ -3,7 +3,9 @@ import { Card, PanelHeader } from "../components/ui/Card";
 import { price as fmtPrice, count, clockTime } from "../lib/format";
 
 function Ladder({ bids, asks }: { bids: OrderBookLevel[]; asks: OrderBookLevel[] }) {
-  const max = Math.max(...bids.map((b) => b.size), ...asks.map((a) => a.size));
+  const max = Math.max(1, ...bids.map((b) => b.size), ...asks.map((a) => a.size));
+  const bestBid = bids[0];
+  const bestAsk = asks[0];
   const Row = ({ lvl, side }: { lvl: OrderBookLevel; side: "bid" | "ask" }) => {
     const pct = (lvl.size / max) * 100;
     const tint = side === "bid" ? "bg-emerald-300/10" : "bg-rose-300/10";
@@ -27,7 +29,7 @@ function Ladder({ bids, asks }: { bids: OrderBookLevel[]; asks: OrderBookLevel[]
       </div>
       <div className="my-1 flex items-center justify-between border-y border-zinc-800 px-3 py-1.5">
         <span className="text-[11px] uppercase tracking-[0.08em] text-zinc-500">Spread</span>
-        <span className="nums text-sm font-semibold text-amber-300">{fmtPrice(asks[0].price - bids[0].price)}</span>
+        <span className="nums text-sm font-semibold text-amber-300">{bestBid && bestAsk ? fmtPrice(bestAsk.price - bestBid.price) : "—"}</span>
       </div>
       <div className="flex flex-col">
         {bids.map((b, i) => <Row key={`b${i}`} lvl={b} side="bid" />)}
@@ -53,7 +55,7 @@ export default function OrderBookView({ data }: { data: PlatformData }) {
           { l: "Last", v: fmtPrice(ob.lastPrice), c: "text-zinc-100" },
           { l: "Spread", v: fmtPrice(ob.spread), c: "text-amber-300" },
           { l: "Microprice", v: ob.microprice.toFixed(3), c: "text-zinc-100" },
-          { l: "Best Bid / Ask", v: `${fmtPrice(ob.bids[0].price)} / ${fmtPrice(ob.asks[0].price)}`, c: "text-zinc-300" },
+          { l: "Best Bid / Ask", v: `${ob.bids[0] ? fmtPrice(ob.bids[0].price) : "—"} / ${ob.asks[0] ? fmtPrice(ob.asks[0].price) : "—"}`, c: "text-zinc-300" },
         ].map((s) => (
           <div key={s.l} className="bg-zinc-900 px-4 py-4">
             <div className="text-[11px] uppercase tracking-[0.08em] text-zinc-500">{s.l}</div>
