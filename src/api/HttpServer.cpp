@@ -1,4 +1,5 @@
 #include "HttpServer.h"
+#include <iostream>
 
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
@@ -21,90 +22,121 @@ void HttpServer::start()
         tcp::endpoint(tcp::v4(), 8080)
     );
 
+    std::cout << "HTTP Server listening on port 8080...\n";
+
     while (true)
     {
-        tcp::socket socket(io);
-
-        acceptor.accept(socket);
-
-        boost::beast::flat_buffer buffer;
-
-        http::request<http::string_body> request;
-
-        http::read(socket, buffer, request);
-
-        if (request.method() == http::verb::options)
+        try
         {
+            tcp::socket socket(io);
+
+            acceptor.accept(socket);
+
+            boost::beast::flat_buffer buffer;
+            http::request<http::string_body> request;
+
+            boost::system::error_code ec;
+
+            http::read(socket, buffer, request, ec);
+
+            if (ec == http::error::end_of_stream)
+            {
+                socket.shutdown(tcp::socket::shutdown_send, ec);
+                continue;
+            }
+
+            if (ec)
+            {
+                std::cerr << "Read Error: "
+                          << ec.message()
+                          << std::endl;
+                continue;
+            }
+
+            // Handle CORS preflight
+            if (request.method() == http::verb::options)
+            {
+                http::response<http::string_body> response(
+                    http::status::no_content,
+                    request.version()
+                );
+
+                response.set(http::field::access_control_allow_origin, "*");
+                response.set(http::field::access_control_allow_methods, "GET, POST, OPTIONS");
+                response.set(http::field::access_control_allow_headers, "Content-Type");
+
+                response.prepare_payload();
+
+                http::write(socket, response);
+
+                socket.shutdown(tcp::socket::shutdown_send, ec);
+
+                continue;
+            }
+
+            HttpMethod method;
+
+            switch (request.method())
+            {
+                case http::verb::get:
+                    method = HttpMethod::GET;
+                    break;
+
+                case http::verb::post:
+                    method = HttpMethod::POST;
+                    break;
+
+                default:
+                    method = HttpMethod::GET;
+                    break;
+            }
+
+            std::string responseBody =
+                router.route(
+                    method,
+                    std::string(request.target()),
+                    request.body()
+                );
+
             http::response<http::string_body> response(
-                http::status::no_content,
+                http::status::ok,
                 request.version()
             );
 
-            response.set(http::field::access_control_allow_origin, "*");
-            response.set(http::field::access_control_allow_methods, "GET, POST, OPTIONS");
-            response.set(http::field::access_control_allow_headers, "Content-Type");
+            response.set(
+                http::field::content_type,
+                "application/json"
+            );
+
+            response.set(
+                http::field::access_control_allow_origin,
+                "*"
+            );
+
+            response.set(
+                http::field::access_control_allow_methods,
+                "GET, POST, OPTIONS"
+            );
+
+            response.set(
+                http::field::access_control_allow_headers,
+                "Content-Type"
+            );
+
+            response.body() = responseBody;
 
             response.prepare_payload();
 
             http::write(socket, response);
 
-            continue;
+            socket.shutdown(tcp::socket::shutdown_send, ec);
         }
-        
-
-        // Convert Beast method -> our enum
-        HttpMethod method;
-
-        switch (request.method())
+        catch (const std::exception& e)
         {
-            case http::verb::get:
-                method = HttpMethod::GET;
-                break;
-
-            case http::verb::post:
-                method = HttpMethod::POST;
-                break;
-
-            default:
-                method = HttpMethod::GET;
-                break;
+            std::cerr
+                << "HTTP Server Error: "
+                << e.what()
+                << std::endl;
         }
-
-        // Router returns JSON as a string
-        std::string responseBody =
-            router.route(
-                method,
-                std::string(request.target()),
-                request.body()
-            );
-
-        // Build HTTP response
-        http::response<http::string_body> response(
-            http::status::ok,
-            request.version()
-        );
-
-        response.set(
-            http::field::content_type,
-            "application/json"
-        );
-
-        response.set(
-    http::field::access_control_allow_origin,
-    "*");
-
-        response.set(
-            http::field::access_control_allow_methods,
-            "GET, POST, OPTIONS");
-
-        response.set(
-            http::field::access_control_allow_headers,
-            "Content-Type");
-
-        response.body() = responseBody;
-
-        response.prepare_payload();
-
-        http::write(socket, response);
     }
 }

@@ -45,9 +45,9 @@ int main() {
 
     CandleAggregator aggregator;
 
-    feed.subscribe(&strategy);
+    //feed.subscribe(&strategy);
 
-    feed.subscribe(&aggregator);
+   // feed.subscribe(&aggregator);
 
     //feed.subscribe(&zscoreStrategy);
 
@@ -62,7 +62,7 @@ int main() {
     "PEP",
     params);
 
-    feed.subscribe(&pairStrategy);
+    //feed.subscribe(&pairStrategy);
 
 
 
