@@ -1,6 +1,6 @@
 #include "OrderBook.h"
 #include <chrono>
-
+#include <iostream>
 MatchingResult OrderBook::submitOrder(const Order &order) {
 
     MatchingResult result;
@@ -185,7 +185,19 @@ std::optional<Price> OrderBook::bestAsk() const {
 }
 void OrderBook::processMarketSell(Order order, MatchingResult& result) {
 
+    std::cout << "\n=== MARKET SELL ===\n";
+    std::cout << "Remaining Qty : " << order.remainingQuantity << '\n';
+    std::cout << "Bid Levels    : " << bids.size() << '\n';
+
+    if (!bids.empty())
+    {
+        std::cout << "Best Bid      : " << bids.begin()->first << '\n';
+        std::cout << "Orders @ Bid  : " << bids.begin()->second.size() << '\n';
+    }
+
     while (order.remainingQuantity > 0 && !bids.empty()) {
+        std::cout << "Entered matching loop\n";
+
 
         auto bestBidIt = bids.begin();
         Price bestBidPrice = bestBidIt->first;

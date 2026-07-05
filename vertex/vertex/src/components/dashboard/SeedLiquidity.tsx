@@ -116,7 +116,7 @@ export default function SeedLiquidity() {
 
       </div>
 
-      <div className="mt-auto border-t border-[#3A322C] pt-5">
+      <div className="mt-auto border-t border-[#3A322C] pt-6 pb-2">
 
         <button
           type="button"

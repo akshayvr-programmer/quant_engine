@@ -25,6 +25,8 @@ AccountSnapshot PaperBroker::getAccount()  {
 MatchingResult PaperBroker::placeOrder(const ExecutionRequest &request) {
     return engine.submitRequest(request);
 
+
+
 }
 
 double PaperBroker::getCash()  {

@@ -12,6 +12,7 @@ import {
   BarChart3,
   TrendingUp,
 } from "lucide-react";
+import OrderBook from "./OrderBook";
 
 export default function Dashboard() {
 
@@ -87,8 +88,10 @@ export default function Dashboard() {
 
           <Card
             title="Order Book"
-            className="flex-1"
-          />
+            className="flex-1">
+              <OrderBook />
+
+            </Card>
 
           <Card
             title="Trade Tape"
@@ -117,7 +120,7 @@ export default function Dashboard() {
 
     <Card
   title="Market Maker"
-  className="col-span-3 h-80">
+  className="col-span-3 h-[420px]">
   <SeedLiquidity />
   </Card>
 

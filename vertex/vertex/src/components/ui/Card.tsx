@@ -17,10 +17,10 @@ export default function Card({
       className={clsx(
         `
         rounded-3xl
-        border border-[#3A322C]
-        bg-[#211D1A]/90
+        border border-[#4A3A2D]
+        bg-[#211D1A]
         backdrop-blur-md
-        px-8 py-7
+        px-8 pt-6 pb-10
 
         shadow-[0_8px_30px_rgba(0,0,0,0.18)]
 
