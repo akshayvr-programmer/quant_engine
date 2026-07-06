@@ -125,3 +125,51 @@ JsonSerializer::serialize(
     return result;
 }
 
+nlohmann::json JsonSerializer::serialize(
+    const AlpacaAccount& account
+)
+{
+    return {
+
+            {"buyingPower", account.buyingPower},
+
+            {"cash", account.cash},
+
+            {"equity", account.equity},
+
+            {"portfolioValue", account.portfolioValue},
+
+            {"longMarketValue", account.longMarketValue},
+
+            {"shortMarketValue", account.shortMarketValue}
+
+    };
+}
+nlohmann::json JsonSerializer::serialize(
+    const std::vector<AlpacaPosition>& positions
+)
+{
+    nlohmann::json result = nlohmann::json::array();
+
+    for (const auto& position : positions)
+    {
+        result.push_back({
+
+            {"symbol", position.symbol},
+
+            {"quantity", position.quantity},
+
+            {"marketValue", position.marketValue},
+
+            {"averageEntryPrice", position.averageEntryPrice},
+
+            {"currentPrice", position.currentPrice},
+
+            {"unrealizedPnL", position.unrealizedPnL}
+
+        });
+    }
+
+    return result;
+}
+

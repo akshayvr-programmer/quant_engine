@@ -1,7 +1,11 @@
 #include "Router.h"
-
+#include "../config/Config.h"
 Router::Router(PaperBroker& broker)
-    : broker(broker)
+    : broker(broker),
+      alpacaClient(
+          Config().get("ALPACA_API_KEY"),
+          Config().get("ALPACA_SECRET_KEY")
+      )
 {
 }
 
@@ -50,6 +54,37 @@ std::string Router::route(
             ).dump(4);
         }
     }
+    if (
+    method == HttpMethod::GET &&
+    path == "/alpaca/account")
+    {
+        auto account =
+            alpacaClient.getAccountInfo();
+
+        return JsonSerializer::serialize(account).dump();
+    }
+
+    if (
+    method == HttpMethod::GET &&
+    path == "/alpaca/bars/AAPL"
+)
+    {
+        return alpacaClient.getBars("AAPL");
+    }
+
+    if (
+    method == HttpMethod::GET &&
+    path == "/alpaca/positions"
+)
+    {
+        auto positions =
+            alpacaClient.getPositions();
+
+        return JsonSerializer::serialize(
+            positions
+        ).dump();
+    }
+
 
     // ============================================================
     // POST Routes
@@ -93,6 +128,28 @@ std::string Router::route(
 }
 )";
         }
+    }
+
+    if (
+    method == HttpMethod::POST &&
+    path == "/alpaca/order"
+)
+    {
+        auto json = nlohmann::json::parse(body);
+
+        SubmitOrderRequest request;
+
+        request.symbol = json["symbol"];
+        request.side = json["side"];
+        request.type = json["type"];
+        request.quantity = json["quantity"];
+
+        if (json.contains("price"))
+        {
+            request.price = json["price"];
+        }
+
+        return alpacaClient.submitOrder(request);
     }
 
     // ============================================================

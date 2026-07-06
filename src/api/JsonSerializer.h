@@ -6,6 +6,10 @@
 #include "dto/TradeSnapshot.h"
 #include "dto/OrderRequest.h"
 #include "dto/OrderBookSnapshot.h"
+#include "../Alpaca/Models/Account.h"
+#include "../Alpaca/Models/Position.h"
+
+
 class JsonSerializer
 {
 public:
@@ -15,6 +19,14 @@ public:
 
     static nlohmann::json serialize(
     const AccountSnapshot& account);
+
+    static nlohmann::json serialize(
+    const AlpacaAccount& account);
+
+    static nlohmann::json serialize(
+    const std::vector<AlpacaPosition>& positions);
+
+
 
     static nlohmann::json serialize(
     const std::vector<TradeSnapshot>& trades);

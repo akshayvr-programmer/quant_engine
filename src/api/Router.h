@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-
+#include "../Alpaca/AlpacaClient.h"
 #include "../broker/PaperBroker.h"
 #include "JsonSerializer.h"
 
@@ -16,6 +16,7 @@ class Router
 private:
 
     PaperBroker& broker;
+    AlpacaClient alpacaClient;
 
 public:
 

@@ -1,4 +1,4 @@
-import { api } from "./api";
+import  api  from "./api";
 import type { OrderBookResponse } from "./types/orderbook";
 
 export async function getOrderBook(symbol: string) {

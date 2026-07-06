@@ -1,16 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
-import { getPositions } from "../../services/positions";
-
+import { useAlpacaPositions } from "../../hooks/useAlpacaPositions";
+import type { AlpacaPosition } from "../../services/types/alpaca";
 export default function PositionsTable() {
 
-    const { data, isLoading } = useQuery({
-        queryKey: ["positions"],
-        queryFn: getPositions,
-        refetchInterval: 1000,
-    });
+    const { data, isLoading } = useAlpacaPositions();
 
     if (isLoading) {
-        return <p>Loading...</p>;
+        return (
+            <p className="text-[#A79B91]">
+                Loading...
+            </p>
+        );
     }
 
     if (!data?.length) {
@@ -22,19 +21,24 @@ export default function PositionsTable() {
     }
 
     return (
+
         <table className="w-full text-left">
 
             <thead>
 
-                <tr className="text-[#A79B91]">
+                <tr className="border-b border-[#3A322C] text-[#A79B91]">
 
-                    <th>Symbol</th>
+                    <th className="pb-3">Symbol</th>
 
-                    <th>Qty</th>
+                    <th className="pb-3">Qty</th>
 
-                    <th>Avg</th>
+                    <th className="pb-3">Avg Price</th>
 
-                    <th>Unrealized</th>
+                    <th className="pb-3">Current</th>
+
+                    <th className="pb-3">Market Value</th>
+
+                    <th className="pb-3">PnL</th>
 
                 </tr>
 
@@ -42,14 +46,14 @@ export default function PositionsTable() {
 
             <tbody>
 
-                {data.map(position => (
+                {data.map((position: AlpacaPosition) => (
 
                     <tr
                         key={position.symbol}
                         className="border-t border-[#3A322C]"
                     >
 
-                        <td className="py-3">
+                        <td className="py-3 font-medium">
                             {position.symbol}
                         </td>
 
@@ -58,14 +62,22 @@ export default function PositionsTable() {
                         </td>
 
                         <td>
-                            ${position.averageCost.toFixed(2)}
+                            ${position.averageEntryPrice.toFixed(2)}
+                        </td>
+
+                        <td>
+                            ${position.currentPrice.toFixed(2)}
+                        </td>
+
+                        <td>
+                            ${position.marketValue.toFixed(2)}
                         </td>
 
                         <td
                             className={
                                 position.unrealizedPnL >= 0
-                                    ? "text-green-400"
-                                    : "text-red-400"
+                                    ? "text-green-400 font-semibold"
+                                    : "text-red-400 font-semibold"
                             }
                         >
                             ${position.unrealizedPnL.toFixed(2)}
@@ -78,5 +90,6 @@ export default function PositionsTable() {
             </tbody>
 
         </table>
+
     );
 }

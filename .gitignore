@@ -4,6 +4,7 @@ cmake-build-release/
 *.o
 *.out
 *.exe
+.env
 
 frontend/node_modules
 *.json

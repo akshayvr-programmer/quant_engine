@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { submitOrder } from "../../services/orders";
-
+import { submitAlpacaOrder } from "../../services/alpacaOrders";
 export default function OrderEntry() {
   const [side, setSide] = useState<"BUY" | "SELL">("BUY");
   const [type, setType] = useState<"MARKET" | "LIMIT">("MARKET");
@@ -11,6 +11,9 @@ export default function OrderEntry() {
   const [price, setPrice] = useState(100);
 
   const queryClient = useQueryClient();
+  const [executionMode, setExecutionMode] = useState<
+    "VERTEX" | "ALPACA">("ALPACA");
+
 
   const mutation = useMutation({
     mutationFn: submitOrder,
@@ -28,17 +31,47 @@ export default function OrderEntry() {
   });
 
   const executeOrder = () => {
-  const order = {
-    symbol,
-    side,
-    type,
-    quantity,
-    ...(type === "LIMIT" ? { price } : {}),
-  };
 
-  console.log(order);
+    const order = {
 
-  mutation.mutate(order);
+        symbol,
+
+        side,
+
+        type,
+
+        quantity,
+
+        ...(type === "LIMIT" ? { price } : {}),
+
+    };
+
+    if (executionMode === "VERTEX") {
+
+        mutation.mutate(order);
+
+    } else {
+
+        submitAlpacaOrder(order)
+            .then(() => {
+
+                queryClient.invalidateQueries({
+                    queryKey: ["alpaca-account"],
+                });
+
+                queryClient.invalidateQueries({
+                    queryKey: ["alpaca-positions"],
+                });
+
+                queryClient.invalidateQueries({
+                    queryKey: ["alpaca-bars"],
+                });
+
+            })
+            .catch(console.error);
+
+    }
+
 };
 
 

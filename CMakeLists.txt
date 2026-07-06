@@ -130,6 +130,16 @@ add_executable(
         src/api/dto/OrderBookLevel.h
         src/api/dto/OrderBookSnapshot.h
 
+        src/Alpaca/AlpacaClient.cpp
+        src/Alpaca/AlpacaClient.h
+        src/config/Config.cpp
+        src/config/Config.h
+        src/Alpaca/Bar.h
+        src/Alpaca/Models/Account.h
+        src/Alpaca/Models/SubmitOrderRequest.h
+        src/Alpaca/Models/Position.h
+        src/Alpaca/Models/Order.h
+
 
         # UI
 
@@ -139,7 +149,7 @@ add_executable(
 )
 
 find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(CURL REQUIRED)
 target_link_libraries(
 
         engine
@@ -150,10 +160,16 @@ target_link_libraries(
 
 
         nlohmann_json::nlohmann_json
+        CURL::libcurl
         ws2_32
 
 
 )
+
+
+
+
+
 
 
 

@@ -24,6 +24,8 @@
 #include "export/DashboardExporter.h"
 #include "broker/PaperBroker.h"
 #include "api/HttpServer.h"
+#include "config/Config.h"
+#include "Alpaca/AlpacaClient.h"
 
 int main() {
 
@@ -277,7 +279,24 @@ int main() {
     PaperBroker broker;
 
     HttpServer server(broker);
-    
+
+
+    Config config;
+
+    AlpacaClient client(
+
+        config.get("ALPACA_API_KEY"),
+
+        config.get("ALPACA_SECRET_KEY")
+
+    );
+
+    std::cout
+
+    << client.getAccount()
+
+    << std::endl;
+
 
 
 
