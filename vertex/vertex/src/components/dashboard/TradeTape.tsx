@@ -1,8 +1,10 @@
-import { useTrades } from "../../hooks/useTrades";
+import { useAlpacaOrders } from "../../hooks/useAlpacaOrders";
+import type { AlpacaOrder } from "../../services/types/alpaca";
+
 
 export default function TradeTape() {
 
-    const { data, isLoading } = useTrades();
+    const { data, isLoading } = useAlpacaOrders();
 
     if (isLoading) {
         return (
@@ -15,41 +17,69 @@ export default function TradeTape() {
     return (
         <div className="flex h-full flex-col overflow-y-auto">
 
-            <div className="grid grid-cols-4 border-b border-[#3A322C] pb-2 text-xs uppercase tracking-wider text-[#8B8178]">
+            <div className="grid grid-cols-5 border-b border-[#3A322C] pb-2 text-xs uppercase tracking-wider text-[#8B8178]">
+
                 <span>Side</span>
+
+                <span>Symbol</span>
+
                 <span>Qty</span>
+
                 <span>Price</span>
+
                 <span className="text-right">Time</span>
+
             </div>
 
-            {data?.length === 0 && (
+            {!data?.length && (
+
                 <div className="flex flex-1 items-center justify-center text-[#5F5750]">
-                    No Trades Yet
+
+                    No Filled Orders
+
                 </div>
+
             )}
 
-            {data?.map((trade, index) => (
+            {data?.map((order: AlpacaOrder, index: number) => (
 
                 <div
                     key={index}
-                    className="grid grid-cols-4 border-b border-[#2E2925] py-2 text-sm"
+                    className="grid grid-cols-5 border-b border-[#2E2925] py-2 text-sm"
                 >
+
                     <span
                         className={
-                            trade.side === "BUY"
-                                ? "text-green-400"
-                                : "text-red-400"
+                            order.side === "buy"
+                                ? "font-semibold text-green-400"
+                                : "font-semibold text-red-400"
                         }
                     >
-                        {trade.side}
+                        {order.side.toUpperCase()}
                     </span>
 
-                    <span>{trade.quantity}</span>
+                    <span>
 
-                    <span>${trade.price.toFixed(2)}</span>
+                        {order.symbol}
+
+                    </span>
+
+                    <span>
+
+                        {order.quantity}
+
+                    </span>
+
+                    <span>
+
+                        ${order.filledPrice.toFixed(2)}
+
+                    </span>
 
                     <span className="text-right text-[#B8ADA3]">
-                        {new Date(trade.timestamp).toLocaleTimeString()}
+
+                        {new Date(order.filledAt).toLocaleTimeString()}
+
                     </span>
 
                 </div>
@@ -58,4 +88,5 @@ export default function TradeTape() {
 
         </div>
     );
+
 }

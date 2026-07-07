@@ -85,6 +85,61 @@ std::string Router::route(
         ).dump();
     }
 
+    if (
+    method == HttpMethod::GET &&
+    path == "/alpaca/orders")
+    {
+        auto orders =
+            alpacaClient.getFilledOrders();
+
+        return JsonSerializer::serialize(
+            orders
+        ).dump();
+    }
+
+    if (
+    method == HttpMethod::GET &&
+    path.rfind("/alpaca/quote/", 0) == 0
+)
+    {
+        std::string symbol =
+            path.substr(
+                std::string("/alpaca/quote/").size()
+            );
+
+        auto quote =
+            alpacaClient.getLatestQuote(symbol);
+
+        return JsonSerializer::serialize(
+            quote
+        ).dump();
+    }
+    if (
+    method == HttpMethod::GET &&
+    path == "/alpaca/openOrders")
+    {
+        auto orders =
+            alpacaClient.getOpenOrders();
+
+        return JsonSerializer::serialize(
+            orders
+        ).dump();
+    }
+    if (
+    method == HttpMethod::DELETE &&
+    path.rfind("/alpaca/order/", 0) == 0
+)
+    {
+        std::string id =
+            path.substr(
+                std::string("/alpaca/order/").size()
+            );
+
+        alpacaClient.cancelOrder(id);
+
+        return R"({"success":true})";
+    }
+
 
     // ============================================================
     // POST Routes

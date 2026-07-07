@@ -102,25 +102,22 @@ std::string AlpacaClient::performRequest(
         CURLOPT_WRITEDATA,
         &response
     );
-
     if (method == "POST")
     {
-        curl_easy_setopt(
-            curl,
-            CURLOPT_POST,
-            1L
-        );
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
 
         curl_easy_setopt(
             curl,
             CURLOPT_POSTFIELDS,
             body.c_str()
         );
-
+    }
+    else if (method == "DELETE")
+    {
         curl_easy_setopt(
             curl,
-            CURLOPT_POSTFIELDSIZE,
-            body.length()
+            CURLOPT_CUSTOMREQUEST,
+            "DELETE"
         );
     }
 
@@ -247,4 +244,141 @@ std::vector<AlpacaPosition> AlpacaClient::getPositions()
     }
 
     return positions;
+}
+
+std::vector<AlpacaOrder> AlpacaClient::getFilledOrders()
+{
+    auto response = performRequest(
+        "https://paper-api.alpaca.markets/v2/orders?status=filled&limit=50&direction=desc"
+    );
+
+    auto json = nlohmann::json::parse(response);
+
+    std::vector<AlpacaOrder> orders;
+
+    for (const auto& item : json)
+    {
+        AlpacaOrder order;
+
+        order.symbol =
+            item["symbol"].get<std::string>();
+
+        order.side =
+            item["side"].get<std::string>();
+
+        order.quantity =
+            std::stoi(item["qty"].get<std::string>());
+
+        order.filledPrice =
+            std::stod(item["filled_avg_price"].get<std::string>());
+
+        order.filledAt =
+            item["filled_at"].get<std::string>();
+
+        orders.push_back(order);
+    }
+
+    return orders;
+}
+
+AlpacaQuote AlpacaClient::getLatestQuote(
+    const std::string& symbol
+)
+{
+    auto response = performRequest(
+
+        "https://data.alpaca.markets/v2/stocks/"
+        + symbol +
+        "/quotes/latest"
+
+    );
+
+    auto json = nlohmann::json::parse(response);
+
+    auto quoteJson = json["quote"];
+
+    AlpacaQuote quote;
+
+    quote.bidPrice =
+        quoteJson["bp"].get<double>();
+
+    quote.bidSize =
+        quoteJson["bs"].get<int>();
+
+    quote.askPrice =
+        quoteJson["ap"].get<double>();
+
+    quote.askSize =
+        quoteJson["as"].get<int>();
+
+    return quote;
+}
+std::vector<AlpacaOpenOrder>
+AlpacaClient::getOpenOrders()
+{
+    auto response = performRequest(
+        "https://paper-api.alpaca.markets/v2/orders?status=open"
+    );
+
+    auto json = nlohmann::json::parse(response);
+
+    std::vector<AlpacaOpenOrder> orders;
+
+    for (const auto& item : json)
+    {
+        AlpacaOpenOrder order;
+
+        order.id =
+            item["id"].get<std::string>();
+
+        order.symbol =
+            item["symbol"].get<std::string>();
+
+        order.side =
+            item["side"].get<std::string>();
+
+        order.type =
+            item["type"].get<std::string>();
+
+        order.quantity =
+            std::stoi(item["qty"].get<std::string>());
+
+        if (
+            item.contains("limit_price") &&
+            !item["limit_price"].is_null()
+        )
+        {
+            order.limitPrice =
+                std::stod(
+                    item["limit_price"].get<std::string>()
+                );
+        }
+        else
+        {
+            order.limitPrice = 0.0;
+        }
+
+        order.status =
+            item["status"].get<std::string>();
+
+        orders.push_back(order);
+    }
+
+    return orders;
+}
+
+bool AlpacaClient::cancelOrder(
+    const std::string& orderId
+)
+{
+    performRequest(
+
+        "https://paper-api.alpaca.markets/v2/orders/" +
+        orderId,
+
+        "DELETE"
+
+    );
+
+    return true;
 }

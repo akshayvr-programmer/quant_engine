@@ -8,7 +8,8 @@
 enum class HttpMethod
 {
     GET,
-    POST
+    POST,
+    DELETE
 };
 
 class Router

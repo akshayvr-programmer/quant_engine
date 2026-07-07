@@ -173,3 +173,74 @@ nlohmann::json JsonSerializer::serialize(
     return result;
 }
 
+nlohmann::json JsonSerializer::serialize(
+    const std::vector<AlpacaOrder>& orders
+)
+{
+    nlohmann::json result = nlohmann::json::array();
+
+    for (const auto& order : orders)
+    {
+        result.push_back({
+
+            {"symbol", order.symbol},
+
+            {"side", order.side},
+
+            {"quantity", order.quantity},
+
+            {"filledPrice", order.filledPrice},
+
+            {"filledAt", order.filledAt}
+
+        });
+    }
+
+    return result;
+}
+
+nlohmann::json JsonSerializer::serialize(
+    const AlpacaQuote& quote
+)
+{
+    return {
+
+            {"bidPrice", quote.bidPrice},
+
+            {"bidSize", quote.bidSize},
+
+            {"askPrice", quote.askPrice},
+
+            {"askSize", quote.askSize}
+
+    };
+}
+nlohmann::json JsonSerializer::serialize(
+    const std::vector<AlpacaOpenOrder>& orders
+)
+{
+    nlohmann::json result = nlohmann::json::array();
+
+    for (const auto& order : orders)
+    {
+        result.push_back({
+
+            {"id", order.id},
+
+            {"symbol", order.symbol},
+
+            {"side", order.side},
+
+            {"type", order.type},
+
+            {"quantity", order.quantity},
+
+            {"limitPrice", order.limitPrice},
+
+            {"status", order.status}
+
+        });
+    }
+
+    return result;
+}

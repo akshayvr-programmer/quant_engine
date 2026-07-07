@@ -139,6 +139,8 @@ add_executable(
         src/Alpaca/Models/SubmitOrderRequest.h
         src/Alpaca/Models/Position.h
         src/Alpaca/Models/Order.h
+        src/Alpaca/Models/Quote.h
+        src/Alpaca/Models/OpenOrder.h
 
 
         # UI

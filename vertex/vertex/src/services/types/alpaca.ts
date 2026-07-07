@@ -24,3 +24,47 @@ export interface AlpacaBar {
     c: number;
     v: number;
 }
+
+export interface AlpacaOrder {
+
+    symbol: string;
+
+    side: string;
+
+    quantity: number;
+
+    filledPrice: number;
+
+    filledAt: string;
+
+}
+
+export interface AlpacaQuote {
+
+    bidPrice: number;
+
+    bidSize: number;
+
+    askPrice: number;
+
+    askSize: number;
+
+}
+
+export interface AlpacaOpenOrder {
+
+    id: string;
+
+    symbol: string;
+
+    side: string;
+
+    type: string;
+
+    quantity: number;
+
+    limitPrice: number;
+
+    status: string;
+
+}

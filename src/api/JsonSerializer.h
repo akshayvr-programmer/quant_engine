@@ -8,8 +8,9 @@
 #include "dto/OrderBookSnapshot.h"
 #include "../Alpaca/Models/Account.h"
 #include "../Alpaca/Models/Position.h"
-
-
+#include "../Alpaca/Models/Quote.h"
+#include "../Alpaca/Models/Order.h"
+#include "../Alpaca/Models/OpenOrder.h"
 class JsonSerializer
 {
 public:
@@ -25,6 +26,17 @@ public:
 
     static nlohmann::json serialize(
     const std::vector<AlpacaPosition>& positions);
+
+    static nlohmann::json serialize(
+    const std::vector<AlpacaOrder>& orders);
+
+    static nlohmann::json serialize(
+    const std::vector<AlpacaOpenOrder>& orders);
+
+    static nlohmann::json serialize(
+    const AlpacaQuote& quote);
+
+
 
 
 

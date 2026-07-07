@@ -19,3 +19,39 @@ body {
 * {
     box-sizing: border-box;
 }
+
+/* ============================
+   Vertex Premium Scrollbars
+============================ */
+
+.scroll-area {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+.scroll-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scroll-area::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 9999px;
+    transition: background 0.2s ease;
+}
+
+.scroll-area:hover {
+    scrollbar-color: #4A4038 transparent;
+}
+
+.scroll-area:hover::-webkit-scrollbar-thumb {
+    background: #4A4038;
+}
+
+.scroll-area:hover::-webkit-scrollbar-thumb:hover {
+    background: #D6A15F;
+}

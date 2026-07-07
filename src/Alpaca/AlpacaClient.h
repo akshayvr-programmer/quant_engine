@@ -6,6 +6,8 @@
 #include "Models/Position.h"
 #include <vector>
 #include "Models/Order.h"
+#include "Models/Quote.h"
+#include "Models/OpenOrder.h"
 
 class AlpacaClient
 {
@@ -17,6 +19,15 @@ public:
     );
     std::vector<AlpacaPosition> getPositions();
     std::vector<AlpacaOrder> getFilledOrders();
+    AlpacaQuote getLatestQuote(
+    const std::string& symbol);
+
+    std::vector<AlpacaOpenOrder> getOpenOrders();
+
+    bool cancelOrder(
+        const std::string& orderId
+    );
+
     
 
     AlpacaAccount getAccountInfo();
