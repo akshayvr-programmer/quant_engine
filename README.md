@@ -1,24 +1,141 @@
-# QuantEngine
+# Vertex
 
-An event-driven quantitative trading platform built in modern C++ — backtesting engine, matching-engine order book, paper broker with a REST API, and a React dashboard on top.
+A modern quantitative trading terminal built with **C++**, **Boost.Beast**, **React**, **TypeScript**, and **Alpaca Paper Trading**.
 
-The design separates **research** (Python — statistical validation, parameter estimation) from **execution** (C++ — tick replay, signal generation, order matching, portfolio accounting), the way production quant systems do.
+![Dashboard](docs/dashboard.png)
+
+---
+
+# Features
+
+- Live Alpaca Account
+- Market Orders
+- Limit Orders
+- Cancel Orders
+- Open Positions
+- Trade Tape
+- Interactive Trading Terminal
+- Event Driven C++ Backend
+- REST API
+- React Trading Dashboard
+
+---
+
+# Architecture
 
 ```
-                    ┌─────────────  RESEARCH (Python)  ─────────────┐
-                    │  Cointegration testing → beta, spread μ/σ     │
-                    │  Regime & strategy benchmarking notebooks     │
-                    └───────────────────┬───────────────────────────┘
-                                        │  JSON parameters
-                                        ▼
-CSV ticks → HistoricalDataPlayer → MarketDataFeed ─┬─→ SMA / EMA / Z-Score / Pairs strategies
-                                                   ├─→ CandleAggregator (OHLC)
-                                                   └─→ AnalyticsManager → PerformanceMetrics
-                                        │
-                             Signal → ExecutionAdapter → RiskManager
-                                        │
-                          ExecutionManager → OrderBook (price-time matching)
-                                        │
-                         PortfolioManager (cash, holdings, realized PnL)
-                                        │
-              PaperBroker → HTTP REST API (Boost.Beast) → React dashboard
+React + TypeScript
+
+↓
+
+REST API
+
+↓
+
+Boost.Beast
+
+↓
+
+Trading Engine
+
+↓
+
+Alpaca Paper API
+```
+
+---
+
+# Tech Stack
+
+Backend
+
+- C++20
+- Boost.Beast
+- libcurl
+- nlohmann/json
+
+Frontend
+
+- React
+- TypeScript
+- TailwindCSS
+- React Query
+- Lightweight Charts
+
+Broker
+
+- Alpaca Paper Trading
+
+---
+
+# Screenshots
+
+## Dashboard
+
+![Dashboard](docs/dashboard.png)
+
+## Orders
+
+![Orders](docs/orders.png)
+
+## Terminal
+
+![Terminal](docs/terminal.png)
+
+---
+
+# Roadmap
+
+### v0.1
+
+- Trading Terminal
+- Dashboard
+- Order Execution
+- Alpaca Integration
+
+### v0.2
+
+- Strategy Runtime
+- AI Terminal
+- Backtesting
+- Portfolio Analytics
+
+### v0.3
+
+- Market Replay
+- Risk Engine
+- Strategy Optimizer
+
+---
+
+# Installation
+
+```bash
+git clone <repo>
+
+cd Vertex
+```
+
+Backend
+
+```bash
+mkdir build
+
+cmake ..
+
+make
+```
+
+Frontend
+
+```bash
+npm install
+
+npm run dev
+```
+
+---
+
+# License
+
+MIT
