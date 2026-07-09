@@ -141,6 +141,10 @@ add_executable(
         src/Alpaca/Models/Order.h
         src/Alpaca/Models/Quote.h
         src/Alpaca/Models/OpenOrder.h
+        src/runtime/StrategyRuntime.h
+        src/runtime/StrategyRuntime.cpp
+        src/api/dto/StrategyInfo.h
+        src/api/dto/StrategyRequest.h
 
 
         # UI

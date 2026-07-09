@@ -244,3 +244,48 @@ nlohmann::json JsonSerializer::serialize(
 
     return result;
 }
+
+nlohmann::json JsonSerializer::serialize(
+    const StrategyInfo& strategy
+)
+{
+    return {
+
+            { "name", strategy.name },
+
+            { "running", strategy.running }
+
+    };
+}
+
+nlohmann::json JsonSerializer::serialize(
+    const std::vector<StrategyInfo>& strategies
+)
+{
+    nlohmann::json json =
+        nlohmann::json::array();
+
+    for (const auto& strategy : strategies)
+    {
+        json.push_back(
+            serialize(strategy)
+        );
+    }
+
+    return json;
+}
+StrategyRequest
+JsonSerializer::deserializeStrategy(
+    const std::string& body
+)
+{
+    auto json =
+        nlohmann::json::parse(body);
+
+    StrategyRequest request;
+
+    request.name =
+        json["name"];
+
+    return request;
+}

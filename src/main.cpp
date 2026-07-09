@@ -26,6 +26,7 @@
 #include "api/HttpServer.h"
 #include "config/Config.h"
 #include "Alpaca/AlpacaClient.h"
+#include "runtime/StrategyRuntime.h"
 
 int main() {
 
@@ -47,6 +48,16 @@ int main() {
 
     CandleAggregator aggregator;
 
+    StrategyRuntime runtime;
+
+    runtime.registerStrategy("ema", &ema_strategy);
+
+    runtime.registerStrategy("zscore", &zscoreStrategy);
+
+    runtime.registerStrategy("moving average", &strategy);
+
+
+
     //feed.subscribe(&strategy);
 
    // feed.subscribe(&aggregator);
@@ -64,12 +75,15 @@ int main() {
     "PEP",
     params);
 
+    runtime.registerStrategy("pairs", &pairStrategy);
+
+
     //feed.subscribe(&pairStrategy);
 
 
 
 
-    
+
 
     HistoricalDataPlayer player("../src/config/KO_PEP_engine.csv");
 
@@ -278,7 +292,8 @@ int main() {
 
     PaperBroker broker;
 
-    HttpServer server(broker);
+    HttpServer server(broker, runtime);
+
 
 
     Config config;
@@ -296,6 +311,9 @@ int main() {
     << client.getAccount()
 
     << std::endl;
+
+    feed.subscribe(&runtime);
+    
 
 
 

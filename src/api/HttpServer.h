@@ -2,7 +2,7 @@
 
 #include "../broker/PaperBroker.h"
 #include "Router.h"
-
+#include "../runtime/StrategyRuntime.h"
 class HttpServer
 {
 private:
@@ -13,7 +13,9 @@ private:
 
 public:
 
-    explicit HttpServer(PaperBroker& broker);
+    explicit HttpServer(
+    PaperBroker& broker,
+    StrategyRuntime& strategyRuntime);
 
     void start();
 };

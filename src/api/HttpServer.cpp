@@ -7,9 +7,10 @@
 using tcp = boost::asio::ip::tcp;
 namespace http = boost::beast::http;
 
-HttpServer::HttpServer(PaperBroker& broker)
+HttpServer::HttpServer(PaperBroker& broker, StrategyRuntime& strategyRuntime)
     : broker(broker),
-      router(broker)
+     router(broker, strategyRuntime)
+
 {
 }
 

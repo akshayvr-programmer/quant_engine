@@ -11,6 +11,8 @@
 #include "../Alpaca/Models/Quote.h"
 #include "../Alpaca/Models/Order.h"
 #include "../Alpaca/Models/OpenOrder.h"
+#include "dto/StrategyInfo.h"
+#include "dto/StrategyRequest.h"
 class JsonSerializer
 {
 public:
@@ -35,6 +37,19 @@ public:
 
     static nlohmann::json serialize(
     const AlpacaQuote& quote);
+
+    static nlohmann::json serialize(
+    const StrategyInfo& strategy
+);
+
+    static nlohmann::json serialize(
+        const std::vector<StrategyInfo>& strategies
+    );
+
+    static StrategyRequest deserializeStrategy(
+        const std::string& body
+    );
+    
 
 
 

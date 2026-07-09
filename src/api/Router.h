@@ -4,6 +4,7 @@
 #include "../Alpaca/AlpacaClient.h"
 #include "../broker/PaperBroker.h"
 #include "JsonSerializer.h"
+#include "../runtime/StrategyRuntime.h"
 
 enum class HttpMethod
 {
@@ -21,7 +22,14 @@ private:
 
 public:
 
-    explicit Router(PaperBroker& broker);
+
+
+    StrategyRuntime& strategyRuntime;
+
+    explicit Router(
+    PaperBroker& broker,
+    StrategyRuntime& strategyRuntime);
+
 
     std::string route(
         HttpMethod method,

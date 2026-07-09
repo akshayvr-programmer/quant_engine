@@ -1,13 +1,18 @@
 #include "Router.h"
 #include "../config/Config.h"
-Router::Router(PaperBroker& broker)
+Router::Router(
+    PaperBroker& broker,
+    StrategyRuntime& strategyRuntime
+)
     : broker(broker),
+      strategyRuntime(strategyRuntime),
       alpacaClient(
           Config().get("ALPACA_API_KEY"),
           Config().get("ALPACA_SECRET_KEY")
       )
 {
 }
+
 
 std::string Router::route(
     HttpMethod method,
@@ -140,6 +145,30 @@ std::string Router::route(
         return R"({"success":true})";
     }
 
+    if (
+    method == HttpMethod::GET &&
+    path == "/strategies")
+
+    {
+        std::vector<StrategyInfo> response;
+
+        for (const auto& name :
+             strategyRuntime.getStrategyNames())
+        {
+            response.push_back({
+
+                name,
+
+                strategyRuntime.isRunning(name)
+
+            });
+        }
+
+        return JsonSerializer::serialize(
+            response
+        ).dump();
+    }
+
 
     // ============================================================
     // POST Routes
@@ -206,6 +235,44 @@ std::string Router::route(
 
         return alpacaClient.submitOrder(request);
     }
+
+    if (
+    method == HttpMethod::POST &&
+    path == "/strategies/start"
+)
+    {
+        auto request =
+            JsonSerializer::deserializeStrategy(
+                body
+            );
+
+        strategyRuntime.start(
+            request.name
+        );
+
+        return R"({
+        "success": true
+    })";
+    }
+    if (
+    method == HttpMethod::POST &&
+    path == "/strategies/stop"
+)
+    {
+        auto request =
+            JsonSerializer::deserializeStrategy(
+                body
+            );
+
+        strategyRuntime.stop(
+            request.name
+        );
+
+        return R"({
+        "success": true
+    })";
+    }
+    
 
     // ============================================================
     // Unknown Route
