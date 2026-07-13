@@ -259,7 +259,7 @@ vertex/
 ## Clone
 
 ```bash
-git clone https://github.com/<your-username>/vertex.git
+git clone https://github.com/akshayvr-programmer/quant_engine.git
 
 cd vertex
 ```
