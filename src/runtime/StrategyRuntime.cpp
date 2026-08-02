@@ -1,21 +1,52 @@
 #include "StrategyRuntime.h"
-
-#include "../strategy/IStrategy.h"
+#include "../strategy/Istrategy.h"
+#include "../strategy/Signal.h"
+#include "../execution/ExecutionAdapter.h"
+#include "../execution/ExecutionManager.h"
 #include <vector>
+#include <iostream>
+
+void StrategyRuntime::setExecutionManager(ExecutionManager* manager)
+{
+    executionManager = manager;
+}
 
 void StrategyRuntime::registerStrategy(
     const std::string& name,
     IStrategy* strategy
 )
 {
+    if (strategy != nullptr)
+    {
+        // Explicitly typed callback variable
+        IStrategy::SignalCallback cb = [this](Signal signal, const std::string& symbol, std::uint64_t quantity) {
+            if (executionManager == nullptr)
+            {
+                std::cout << "[Runtime Warning] ExecutionManager not attached to StrategyRuntime!" << std::endl;
+                return;
+            }
+
+            auto requestOpt = ExecutionAdapter::signalToRequest(signal, symbol, quantity);
+            if (requestOpt.has_value())
+            {
+                std::cout << "\n[PIPELINE TRIPPED] Signal -> Risk Check -> Matching Engine" << std::endl;
+                MatchingResult result = executionManager->submitRequest(requestOpt.value());
+                std::cout << "[PIPELINE] Trades Executed: " << result.trades.size()
+                          << " | Events Generated: " << result.events.size() << std::endl;
+            }
+        };
+
+        strategy->setSignalCallback(cb);
+    }
+
     strategies[name] = {
-
         strategy,
-
         false
-
     };
 }
+
+
+
 
 IStrategy* StrategyRuntime::get(
     const std::string& name
@@ -29,7 +60,6 @@ IStrategy* StrategyRuntime::get(
     }
 
     return it->second.strategy;
-
 }
 
 std::vector<std::string>
@@ -44,6 +74,7 @@ StrategyRuntime::getStrategyNames() const
 
     return names;
 }
+
 bool StrategyRuntime::start(
     const std::string& name
 )
@@ -54,6 +85,7 @@ bool StrategyRuntime::start(
         return false;
 
     it->second.running = true;
+    std::cout << "[Runtime] Started strategy: " << name << std::endl;
 
     return true;
 }
@@ -68,6 +100,7 @@ bool StrategyRuntime::stop(
         return false;
 
     it->second.running = false;
+    std::cout << "[Runtime] Stopped strategy: " << name << std::endl;
 
     return true;
 }
@@ -83,18 +116,27 @@ bool StrategyRuntime::isRunning(
 
     return it->second.running;
 }
-void StrategyRuntime::onTick(
-    const Tick& tick
-)
+
+void StrategyRuntime::onTick(const Tick& tick)
 {
-    for (auto& pair : strategies)
+    std::cout
+        << "[Runtime] "
+        << tick.symbol
+        << " "
+        << tick.price
+        << std::endl;
+
+    for (auto& [name, info] : strategies)
     {
-        if (!pair.second.running)
-        {
+        if (!info.running || info.strategy == nullptr)
             continue;
-        }
 
-        pair.second.strategy->onTick(tick);
+        info.strategy->onTick(tick);
 
+        std::cout
+            << "["
+            << name
+            << "] processed tick"
+            << std::endl;
     }
 }

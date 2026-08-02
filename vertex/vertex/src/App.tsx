@@ -10,6 +10,7 @@ import OpenOrders from "./components/dashboard/OpenOrders";
 import TradeTape from "./components/dashboard/TradeTape";
 import PositionsTable from "./components/dashboard/PositionsTable";
 
+import StrategiesTab from "./components/dashboard/StrategiesTab";
 
 import Card from "./components/ui/Card";
 
@@ -82,11 +83,10 @@ export default function App() {
 
             case "strategies":
 
-                return (
-                    <div className="text-[#A79B91]">
-                        Strategies coming soon...
-                    </div>
-                );
+                
+                    return <StrategiesTab />
+                
+            
 
             default:
 

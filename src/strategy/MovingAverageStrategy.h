@@ -43,6 +43,8 @@ private:
 
 public:
 
+
+
     MovingAverageStrategy(
         size_t shortWindow,
         size_t longWindow,

@@ -27,6 +27,7 @@
 #include "config/Config.h"
 #include "Alpaca/AlpacaClient.h"
 #include "runtime/StrategyRuntime.h"
+#include "Alpaca/AlpacaMarketDataStream.h"
 
 int main() {
 
@@ -40,7 +41,7 @@ int main() {
 
 
     AnalyticsManager analyticsManager;
-    ZScoreStrategy zscoreStrategy(5,1.5, &analyticsManager);
+
 
     MovingAverageStrategy strategy(3, 5, &analyticsManager);
 
@@ -52,7 +53,7 @@ int main() {
 
     runtime.registerStrategy("ema", &ema_strategy);
 
-    runtime.registerStrategy("zscore", &zscoreStrategy);
+
 
     runtime.registerStrategy("moving average", &strategy);
 
@@ -64,7 +65,7 @@ int main() {
 
     //feed.subscribe(&zscoreStrategy);
 
-    feed.subscribe(&ema_strategy);
+
     PairParamters params =
     PairParameterLoader::load(
         "../src/config/KO_PEP.json"
@@ -91,37 +92,9 @@ int main() {
 
 
 
-    player.replay(feed);
+   // player.replay(feed);
 
-    PerformanceMetrics metrics =
-    MetricsCalculator::calculate(
-        pairStrategy.getCompletedTrades()
-    );
 
-    std::cout
-    << "\n===== PERFORMANCE =====\n"
-    << "Total Trades: "
-    << metrics.totalTrades
-
-    << "\nWin Rate: "
-    << metrics.winRate * 100
-    << "%"
-
-    << "\nTotal PnL: "
-    << metrics.totalPnL
-
-    << "\nAverage Trade PnL: "
-    << metrics.averageTradePnL
-    << "\nSharpe Ratio: "
-    << metrics.sharpeRatio
-
-    << "\nMax Drawdown: "
-    << metrics.maxDrawdown
-
-    << "\nProfit Factor: "
-    << metrics.profitFactor
-
-    << std::endl;
 
 
 
@@ -131,55 +104,14 @@ int main() {
     "engine_output.json");
 
 
-    std::vector<double> prices {
-        100,101,102,103,104,
-        105,106,107,108
-    };
-
-    double volatility =
-        FeatureExtractor::calculateVolatility(
-            prices
-        );
-
-    double momentum =
-        FeatureExtractor::calculateMomentum(
-            prices
-        );
-
-    Regime regime = RegimeClassifier::Classify(volatility, momentum);
-
-    switch(regime)
-    {
-        case Regime::TRENDING:
-            std::cout << "TRENDING\n";
-            break;
-
-        case Regime::VOLATILE:
-            std::cout << "VOLATILE\n";
-            break;
-
-        case Regime::MEAN_REVERTING:
-            std::cout << "MEAN_REVERTING\n";
-            break;
-    }
-
-    std::cout
-        << "Volatility: "
-        << volatility
-        << "\nMomentum: "
-        << momentum
-        << std::endl;
-
-
-
-
-
-
+    
 
 
     std::cout << "===== ENGINE END =====" << std::endl;
 
     ExecutionManager manager;
+
+    runtime.setExecutionManager(&manager); // <-- ADD THIS LINE!
     ExecutionRequest sellLiquidity{
         "AAPL",
         Side::SELL,
@@ -313,6 +245,18 @@ int main() {
     << std::endl;
 
     feed.subscribe(&runtime);
+
+    AlpacaMarketDataStream stream(
+config.get("ALPACA_API_KEY"),
+config.get("ALPACA_SECRET_KEY"),
+feed);
+
+    stream.start({"AAPL"});
+
+    std::cout << stream.isRunning() << std::endl;
+
+    std::cout << "Created stream\n";
+
     
 
 
@@ -322,6 +266,8 @@ int main() {
 
 
     server.start();
+
+
 
 
 

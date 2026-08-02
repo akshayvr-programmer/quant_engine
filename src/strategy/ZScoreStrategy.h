@@ -32,6 +32,10 @@ public:
     );
     const std::vector<Trade>& getCompletedTrades() const;
 
+
+
+
+
     void onTick(const Tick& tick) override;
 
     double calculateMean() const;

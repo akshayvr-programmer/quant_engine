@@ -38,6 +38,8 @@ private:
 
 public:
 
+
+
     EMAStrategy(
         size_t shortPeriod,
         size_t longPeriod,

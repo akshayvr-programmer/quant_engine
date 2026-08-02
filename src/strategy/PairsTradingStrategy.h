@@ -46,6 +46,7 @@ public:
         const PairParamters& params
     );
 
+
     void onTick(
         const Tick& tick
     ) override;

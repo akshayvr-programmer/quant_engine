@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "MovingAverageStrategy.h"
 #include "../trading/TradeEvent.h"
 
@@ -22,7 +21,6 @@ void MovingAverageStrategy::onTick(
 )
 {
     shortPrices.push_back(tick.price);
-
     longPrices.push_back(tick.price);
 
     if (shortPrices.size() > shortWindow) {
@@ -40,18 +38,10 @@ void MovingAverageStrategy::onTick(
         return;
     }
 
-    double shortAverage =
-        calculateAverage(shortPrices);
+    double shortAverage = calculateAverage(shortPrices);
+    double longAverage = calculateAverage(longPrices);
 
-    double longAverage =
-        calculateAverage(longPrices);
-
-    Signal signal =
-        generateSignal(
-            shortAverage,
-            longAverage
-        );
-
+    Signal signal = generateSignal(shortAverage, longAverage);
     std::string action = "HOLD";
 
     if (
@@ -59,6 +49,9 @@ void MovingAverageStrategy::onTick(
         currentPosition == Position::FLAT
     ) {
         currentPosition = Position::LONG;
+
+        // Emit signal to Execution Pipeline (Risk Manager -> Order Book -> Portfolio)
+        emitSignal(Signal::BUY, tick.symbol, 10);
 
         activeTrade = new Trade(
             tick.symbol,
@@ -75,29 +68,30 @@ void MovingAverageStrategy::onTick(
         };
 
         tradeEvents.push_back(event);
-
         action = "ENTER LONG";
     }
-
     else if (
         signal == Signal::SELL &&
         currentPosition == Position::LONG
     ) {
         currentPosition = Position::FLAT;
 
-        activeTrade->exitPrice =
-            tick.price;
+        // Emit signal to Execution Pipeline
+        emitSignal(Signal::SELL, tick.symbol, 10);
 
-        activeTrade->exitTimestamp =
-            tick.timestamp;
+        double pnl = 0.0;
+        if (activeTrade != nullptr) {
+            activeTrade->exitPrice = tick.price;
+            activeTrade->exitTimestamp = tick.timestamp;
+            activeTrade->open = false;
 
-        activeTrade->open = false;
+            pnl = activeTrade->exitPrice - activeTrade->entryPrice;
+            totalPnL += pnl;
 
-        double pnl =
-            activeTrade->exitPrice -
-            activeTrade->entryPrice;
-
-        totalPnL += pnl;
+            completedTrades.push_back(*activeTrade);
+            delete activeTrade;
+            activeTrade = nullptr;
+        }
 
         TradeEvent event {
             TradeEventType::EXIT_LONG,
@@ -107,40 +101,22 @@ void MovingAverageStrategy::onTick(
         };
 
         tradeEvents.push_back(event);
-
-        action =
-            "EXIT LONG | Trade PnL: " +
-            std::to_string(pnl);
-
-        completedTrades.push_back(
-            *activeTrade
-        );
-
-        delete activeTrade;
-
-        activeTrade = nullptr;
+        action = "EXIT LONG | Trade PnL: " + std::to_string(pnl);
     }
 
     EngineSnapshot snapshot {
-
         tick.timestamp,
-
         tick.price,
-
         shortAverage,
-
         longAverage,
-
         0.0,
-
         action,
-
         totalPnL
     };
 
-    analyticsManager->addSnapshot(
-        snapshot
-    );
+    if (analyticsManager != nullptr) {
+        analyticsManager->addSnapshot(snapshot);
+    }
 
     std::cout
         << "Price: " << tick.price
@@ -148,8 +124,7 @@ void MovingAverageStrategy::onTick(
         << " | Long MA: " << longAverage
         << " | Action: " << action
         << " | Total PnL: " << totalPnL
-        << " | Trades: "
-        << completedTrades.size()
+        << " | Trades: " << completedTrades.size()
         << std::endl;
 }
 
@@ -157,8 +132,9 @@ double MovingAverageStrategy::calculateAverage(
     const std::deque<double>& prices
 ) const
 {
-    double sum = 0.0;
+    if (prices.empty()) return 0.0;
 
+    double sum = 0.0;
     for (const auto& price : prices) {
         sum += price;
     }
@@ -181,6 +157,7 @@ Signal MovingAverageStrategy::generateSignal(
 
     return Signal::HOLD;
 }
+
 const std::vector<Trade>&
 MovingAverageStrategy::getCompletedTrades() const
 {

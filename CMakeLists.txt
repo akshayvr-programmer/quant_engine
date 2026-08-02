@@ -145,6 +145,8 @@ add_executable(
         src/runtime/StrategyRuntime.cpp
         src/api/dto/StrategyInfo.h
         src/api/dto/StrategyRequest.h
+        src/Alpaca/AlpacaMarketDataStream.h
+        src/Alpaca/AlpacaMarketDataStream.cpp
 
 
         # UI
@@ -153,6 +155,10 @@ add_executable(
         # Existing files...
         # Keep everything else you already have
 )
+
+find_package(Threads REQUIRED)
+find_package(OpenSSL REQUIRED)
+
 
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(CURL REQUIRED)
@@ -168,6 +174,10 @@ target_link_libraries(
         nlohmann_json::nlohmann_json
         CURL::libcurl
         ws2_32
+        Threads::Threads
+        OpenSSL::SSL
+        OpenSSL::Crypto
+        
 
 
 )
