@@ -28,7 +28,7 @@
 #include "Alpaca/AlpacaClient.h"
 #include "runtime/StrategyRuntime.h"
 #include "Alpaca/AlpacaMarketDataStream.h"
-
+#include "ai/AIClient.h"
 int main() {
 
 
@@ -266,6 +266,8 @@ feed);
 
 
     server.start();
+
+    AIClient ai(config.get("CLAUDE_API_KEY"));
 
 
 

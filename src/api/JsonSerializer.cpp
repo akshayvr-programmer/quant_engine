@@ -289,3 +289,17 @@ JsonSerializer::deserializeStrategy(
 
     return request;
 }
+
+AIChatRequest JsonSerializer::deserializeAIChat(
+    const std::string& body
+)
+{
+    auto json =
+        nlohmann::json::parse(body);
+
+    AIChatRequest request;
+
+    request.prompt = json["prompt"];
+
+    return request;
+}

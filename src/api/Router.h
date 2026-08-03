@@ -5,6 +5,7 @@
 #include "../broker/PaperBroker.h"
 #include "JsonSerializer.h"
 #include "../runtime/StrategyRuntime.h"
+#include "../ai/AIClient.h"
 
 enum class HttpMethod
 {
@@ -19,6 +20,8 @@ private:
 
     PaperBroker& broker;
     AlpacaClient alpacaClient;
+    AIClient aiClient;
+
 
 public:
 

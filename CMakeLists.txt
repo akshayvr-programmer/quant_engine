@@ -147,6 +147,9 @@ add_executable(
         src/api/dto/StrategyRequest.h
         src/Alpaca/AlpacaMarketDataStream.h
         src/Alpaca/AlpacaMarketDataStream.cpp
+        src/ai/AIClient.h
+        src/ai/AIClient.cpp
+        src/api/dto/AIChatRequest.h
 
 
         # UI

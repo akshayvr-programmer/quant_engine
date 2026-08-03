@@ -7,7 +7,7 @@ import {
     BarChart3,
     Shield,
     History,
-    Settings,
+    Settings, MessageSquare
 } from "lucide-react";
 
 type Page =
@@ -19,7 +19,9 @@ type Page =
     | "analytics"
     | "risk"
     | "replay"
-    | "settings";
+    | "settings"
+    | "ai";
+
 
 interface SidebarProps {
 
@@ -67,6 +69,11 @@ const items: {
         icon: Brain,
         label: "Strategies",
         page: "strategies",
+    },
+    {
+    icon: MessageSquare,
+    label: "AI Assistant",
+    page: "ai",
     },
 
     {

@@ -13,6 +13,7 @@
 #include "../Alpaca/Models/OpenOrder.h"
 #include "dto/StrategyInfo.h"
 #include "dto/StrategyRequest.h"
+#include "dto/AIChatRequest.h"
 class JsonSerializer
 {
 public:
@@ -49,6 +50,9 @@ public:
     static StrategyRequest deserializeStrategy(
         const std::string& body
     );
+
+    static AIChatRequest deserializeAIChat(
+    const std::string& body);
     
 
 

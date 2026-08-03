@@ -11,7 +11,7 @@ import TradeTape from "./components/dashboard/TradeTape";
 import PositionsTable from "./components/dashboard/PositionsTable";
 
 import StrategiesTab from "./components/dashboard/StrategiesTab";
-
+import AIAssistant from "./components/dashboard/AIAssistant";
 import Card from "./components/ui/Card";
 
 type Page =
@@ -19,7 +19,8 @@ type Page =
     | "orders"
     | "markets"
     | "portfolio"
-    | "strategies";
+    | "strategies"
+    | "ai";
 
 export default function App() {
 
@@ -85,6 +86,12 @@ export default function App() {
 
                 
                     return <StrategiesTab />
+            
+            case "ai":
+                return <AIAssistant />
+                
+                 
+                    
                 
             
 

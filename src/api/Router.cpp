@@ -9,7 +9,11 @@ Router::Router(
       alpacaClient(
           Config().get("ALPACA_API_KEY"),
           Config().get("ALPACA_SECRET_KEY")
-      )
+      ),
+      aiClient(
+          Config().get("CLAUDE_API_KEY")
+          )
+
 {
 }
 
@@ -271,6 +275,28 @@ std::string Router::route(
         return R"({
         "success": true
     })";
+    }
+
+    if (
+    method == HttpMethod::POST &&
+    path == "/ai/chat"
+)
+    {
+        AIChatRequest request =
+            JsonSerializer::deserializeAIChat(
+                body
+            );
+
+        std::string answer =
+            aiClient.chat(
+                request.prompt
+            );
+
+        return nlohmann::json{
+
+            { "response", answer }
+
+        }.dump();
     }
     
 
