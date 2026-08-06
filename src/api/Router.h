@@ -6,12 +6,12 @@
 #include "JsonSerializer.h"
 #include "../runtime/StrategyRuntime.h"
 #include "../ai/AIClient.h"
-
+#include "../market data/MarketDataFeed.h"
 enum class HttpMethod
 {
     GET,
     POST,
-    DELETE
+    DELETE_
 };
 
 class Router
@@ -19,6 +19,7 @@ class Router
 private:
 
     PaperBroker& broker;
+    MarketDataFeed& feed;
     AlpacaClient alpacaClient;
     AIClient aiClient;
 
@@ -31,6 +32,7 @@ public:
 
     explicit Router(
     PaperBroker& broker,
+    MarketDataFeed& feed,
     StrategyRuntime& strategyRuntime);
 
 

@@ -107,6 +107,9 @@ void PairsTradingStrategy::onTick(
             currentPosition =
                 PairPosition::SHORT_SPREAD;
 
+            emitSignal(Signal::SELL, symbolA, 10);
+            emitSignal(Signal::BUY, symbolB, 10);
+
             activeTrade =
                 new Trade(
                     symbolA + "-" + symbolB,
@@ -128,6 +131,9 @@ void PairsTradingStrategy::onTick(
         {
             currentPosition =
                 PairPosition::LONG_SPREAD;
+
+            emitSignal(Signal::BUY, symbolA, 10);
+            emitSignal(Signal::SELL, symbolB, 10);
 
             activeTrade =
                 new Trade(
@@ -186,6 +192,9 @@ void PairsTradingStrategy::onTick(
             currentPosition =
                 PairPosition::FLAT;
 
+            emitSignal(Signal::SELL, symbolA, 10);
+            emitSignal(Signal::BUY, symbolB, 10);
+
             std::cout
                 << "[EXIT LONG SPREAD]"
                 << " PnL: "
@@ -232,6 +241,9 @@ void PairsTradingStrategy::onTick(
 
             currentPosition =
                 PairPosition::FLAT;
+
+            emitSignal(Signal::BUY, symbolA, 10);
+            emitSignal(Signal::SELL, symbolB, 10);
 
             std::cout
                 << "[EXIT SHORT SPREAD]"

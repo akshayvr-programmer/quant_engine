@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
-import { Play, Square, Zap, TrendingUp } from "lucide-react";
+import { Play, Square, Zap, TrendingUp, Activity } from "lucide-react";
 import Card from "../ui/Card";
-import { getStrategies, startStrategy, stopStrategy, StrategyItem } from "../../services/strategies";
+import { getStrategies, injectTick, startStrategy, stopStrategy, StrategyItem } from "../../services/strategies";
 
 export default function StrategiesTab() {
   const [strategies, setStrategies] = useState<StrategyItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [replaySymbol, setReplaySymbol] = useState("AAPL");
+  const [replayPrices, setReplayPrices] = useState("100,101,102,99,98");
+  const [replaying, setReplaying] = useState(false);
+  const [replayStatus, setReplayStatus] = useState<string | null>(null);
 
   const fetchStrategies = async () => {
     try {
@@ -39,6 +43,39 @@ export default function StrategiesTab() {
     }
   };
 
+  const handleReplayTicks = async () => {
+    const prices = replayPrices
+      .split(",")
+      .map((price) => Number(price.trim()))
+      .filter((price) => Number.isFinite(price) && price > 0);
+
+    if (!prices.length) {
+      setReplayStatus("Enter at least one valid price.");
+      return;
+    }
+
+    setReplaying(true);
+    setReplayStatus(null);
+
+    try {
+      for (const [index, price] of prices.entries()) {
+        await injectTick({
+          symbol: replaySymbol.trim().toUpperCase() || "AAPL",
+          price,
+          volume: 1,
+          timestamp: Date.now() + index,
+        });
+      }
+
+      setReplayStatus(`Injected ${prices.length} ${replaySymbol.toUpperCase()} ticks into the runtime.`);
+    } catch (err) {
+      console.error("Error replaying ticks:", err);
+      setReplayStatus("Failed to inject ticks. Check that the C++ engine is running.");
+    } finally {
+      setReplaying(false);
+    }
+  };
+
   if (loading) {
     return <div className="p-8 text-zinc-400 font-mono">Loading Strategy Runtime...</div>;
   }
@@ -59,6 +96,48 @@ export default function StrategiesTab() {
             {error}
           </span>
         )}
+      </div>
+
+      <div className="rounded-xl border border-[#3C342E] bg-[#1C1815] p-5">
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <div>
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-[#F5F1EB]">
+              <Activity className="h-4 w-4 text-[#D6A15F]" />
+              Replay Test Ticks
+            </h3>
+            <p className="mt-1 text-xs text-[#A79B91]">
+              Inject synthetic ticks into the same feed used by live Alpaca streaming.
+            </p>
+          </div>
+          {replayStatus && (
+            <span className="max-w-md text-right text-xs text-[#A79B91]">
+              {replayStatus}
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-12 gap-3">
+          <input
+            value={replaySymbol}
+            onChange={(event) => setReplaySymbol(event.target.value.toUpperCase())}
+            className="col-span-2 rounded-lg border border-[#3C342E] bg-[#2A2420] px-3 py-2 text-sm text-[#F5F1EB] outline-none transition focus:border-[#D6A15F]"
+            placeholder="AAPL"
+          />
+          <input
+            value={replayPrices}
+            onChange={(event) => setReplayPrices(event.target.value)}
+            className="col-span-8 rounded-lg border border-[#3C342E] bg-[#2A2420] px-3 py-2 text-sm text-[#F5F1EB] outline-none transition focus:border-[#D6A15F]"
+            placeholder="100,101,102,99,98"
+          />
+          <button
+            type="button"
+            onClick={handleReplayTicks}
+            disabled={replaying}
+            className="col-span-2 rounded-lg bg-[#D6A15F] px-4 py-2 text-sm font-semibold text-[#171411] transition hover:bg-[#E0AF74] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {replaying ? "Injecting..." : "Replay"}
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

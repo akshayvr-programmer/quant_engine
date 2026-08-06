@@ -2,9 +2,11 @@
 #include "../config/Config.h"
 Router::Router(
     PaperBroker& broker,
+    MarketDataFeed& feed,
     StrategyRuntime& strategyRuntime
 )
     : broker(broker),
+      feed(feed),
       strategyRuntime(strategyRuntime),
       alpacaClient(
           Config().get("ALPACA_API_KEY"),
@@ -135,7 +137,7 @@ std::string Router::route(
         ).dump();
     }
     if (
-    method == HttpMethod::DELETE &&
+    method == HttpMethod::DELETE_ &&
     path.rfind("/alpaca/order/", 0) == 0
 )
     {
@@ -298,6 +300,24 @@ std::string Router::route(
 
         }.dump();
     }
+
+    if (method == HttpMethod::POST && path == "/ticks/inject")
+    {
+        auto json = nlohmann::json::parse(body);
+
+        Tick tick(
+            json["symbol"].get<std::string>(),
+            json["price"].get<double>(),
+            json.value("volume", 1.0),
+            json.value("timestamp", 0LL)
+        );
+
+        feed.addTick(tick);
+
+        return R"({"success":true})";
+    }
+
+
     
 
     // ============================================================

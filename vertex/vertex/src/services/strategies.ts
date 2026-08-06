@@ -17,3 +17,12 @@ export async function startStrategy(name: string): Promise<void> {
 export async function stopStrategy(name: string): Promise<void> {
   await api.post("/strategies/stop", { name });
 }
+
+export async function injectTick(tick: {
+  symbol: string;
+  price: number;
+  volume?: number;
+  timestamp?: number;
+}): Promise<void> {
+  await api.post("/ticks/inject", tick);
+}

@@ -1,7 +1,7 @@
 import clsx from "clsx";
 
 interface CardProps {
-    title: string;
+    title?: string;
     className?: string;
     children: React.ReactNode;
 }
@@ -18,9 +18,11 @@ export default function Card({
                 className
             )}
         >
-            <div className="shrink-0 px-5 pb-2 pt-4 text-xs uppercase tracking-widest text-[#8B8178]">
-                {title}
-            </div>
+            {title && (
+                <div className="shrink-0 px-5 pb-2 pt-4 text-xs uppercase tracking-widest text-[#8B8178]">
+                    {title}
+                </div>
+            )}
 
             <div className="scroll-area min-h-0 flex-1 px-5 pb-5">
                 {children}

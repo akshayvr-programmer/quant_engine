@@ -7,9 +7,14 @@
 using tcp = boost::asio::ip::tcp;
 namespace http = boost::beast::http;
 
-HttpServer::HttpServer(PaperBroker& broker, StrategyRuntime& strategyRuntime)
+HttpServer::HttpServer(
+    PaperBroker& broker,
+    MarketDataFeed& feed,
+    StrategyRuntime& strategyRuntime
+)
     : broker(broker),
-     router(broker, strategyRuntime)
+      feed(feed),
+      router(broker, feed, strategyRuntime)
 
 {
 }
@@ -63,7 +68,7 @@ void HttpServer::start()
                 );
 
                 response.set(http::field::access_control_allow_origin, "*");
-                response.set(http::field::access_control_allow_methods, "GET, POST, OPTIONS");
+                response.set(http::field::access_control_allow_methods, "GET, POST, DELETE, OPTIONS");
                 response.set(http::field::access_control_allow_headers, "Content-Type");
 
                 response.prepare_payload();
@@ -85,6 +90,10 @@ void HttpServer::start()
 
                 case http::verb::post:
                     method = HttpMethod::POST;
+                    break;
+
+                case http::verb::delete_:
+                    method = HttpMethod::DELETE_;
                     break;
 
                 default:
@@ -116,7 +125,7 @@ void HttpServer::start()
 
             response.set(
                 http::field::access_control_allow_methods,
-                "GET, POST, OPTIONS"
+                "GET, POST, DELETE, OPTIONS"
             );
 
             response.set(

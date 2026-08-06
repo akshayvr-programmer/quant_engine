@@ -77,18 +77,19 @@ export default function AIAssistant() {
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-10rem)] max-h-[800px]">
+<div className="flex h-[calc(100vh-10rem)] max-h-[820px] flex-col rounded-xl border border-[#3C342E] bg-[#1C1815] shadow-2xl shadow-black/20">
+  <div className="border-b border-[#3C342E] px-5 py-4">
+    <div className="flex items-center gap-3">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#D6A15F]/30 bg-[#D6A15F]/10">
+        <Sparkles className="h-5 w-5 text-[#D6A15F]" />
+      </div>
+      <div>
+        <h2 className="text-lg font-bold text-[#F5F1EB]">AI Trading Assistant</h2>
+        <p className="text-xs text-[#A79B91]">Strategy research, risk review, and market reasoning</p>
+      </div>
+    </div>
+  </div>
 
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                </div>
-                <div>
-                    <h2 className="text-lg font-bold text-zinc-100">AI Trading Assistant</h2>
-                    <p className="text-xs text-zinc-500">Powered by Claude · Connected to Vertex Engine</p>
-                </div>
-            </div>
 
             {/* Suggested Prompts (only shown when only 1 message = initial) */}
             {messages.length === 1 && (
@@ -97,7 +98,8 @@ export default function AIAssistant() {
                         <button
                             key={prompt}
                             onClick={() => handleSend(prompt)}
-                            className="text-left text-xs px-3 py-2.5 rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-amber-500/30 hover:text-zinc-200 transition-all"
+                            className="rounded-lg border border-[#3C342E] bg-[#211D1A] px-3 py-2.5 text-left text-xs text-[#B8ADA3] transition hover:border-[#D6A15F]/50 hover:bg-[#2A2420] hover:text-[#F5F1EB]"
+                            
                         >
                             {prompt}
                         </button>

@@ -112,6 +112,8 @@ void EMAStrategy::onTick(
         currentPosition =
             Position::LONG;
 
+        emitSignal(Signal::BUY, tick.symbol, 10);
+
         activeTrade =
             new Trade(
                 tick.symbol,
@@ -139,6 +141,8 @@ void EMAStrategy::onTick(
 
         currentPosition =
             Position::FLAT;
+
+        emitSignal(Signal::SELL, tick.symbol, 10);
 
         activeTrade->exitPrice =
             tick.price;

@@ -20,6 +20,10 @@ type Page =
     | "markets"
     | "portfolio"
     | "strategies"
+    | "analytics"
+    | "risk"
+    | "replay"
+    | "settings"
     | "ai";
 
 export default function App() {

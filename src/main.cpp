@@ -224,7 +224,7 @@ int main() {
 
     PaperBroker broker;
 
-    HttpServer server(broker, runtime);
+    HttpServer server(broker, feed, runtime);
 
 
 
@@ -266,20 +266,6 @@ feed);
 
 
     server.start();
-
-    AIClient ai(config.get("CLAUDE_API_KEY"));
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     return 0;
