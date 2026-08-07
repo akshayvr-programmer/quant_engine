@@ -28,13 +28,13 @@ export async function getAlpacaPositions(): Promise<AlpacaPosition[]> {
     return response.data;
 }
 
-export async function getBars(): Promise<{
+export async function getBars(symbol = "AAPL"): Promise<{
     bars: AlpacaBar[];
 }> {
 
     const response =
         await api.get(
-            "/alpaca/bars/AAPL"
+            `/alpaca/bars/${symbol}`
         );
 
     return response.data;

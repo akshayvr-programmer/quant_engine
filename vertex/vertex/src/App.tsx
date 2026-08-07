@@ -9,6 +9,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import OpenOrders from "./components/dashboard/OpenOrders";
 import TradeTape from "./components/dashboard/TradeTape";
 import PositionsTable from "./components/dashboard/PositionsTable";
+import MarketsView from "./components/dashboard/MarketsView";
 
 import StrategiesTab from "./components/dashboard/StrategiesTab";
 import AIAssistant from "./components/dashboard/AIAssistant";
@@ -72,11 +73,7 @@ export default function App() {
 
             case "markets":
 
-                return (
-                    <div className="text-[#A79B91]">
-                        Markets coming soon...
-                    </div>
-                );
+                return <MarketsView />;
 
             case "portfolio":
 

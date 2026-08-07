@@ -77,10 +77,15 @@ std::string Router::route(
 
     if (
     method == HttpMethod::GET &&
-    path == "/alpaca/bars/AAPL"
+    path.rfind("/alpaca/bars/", 0) == 0
 )
     {
-        return alpacaClient.getBars("AAPL");
+        std::string symbol =
+            path.substr(
+                std::string("/alpaca/bars/").size()
+            );
+
+        return alpacaClient.getBars(symbol);
     }
 
     if (

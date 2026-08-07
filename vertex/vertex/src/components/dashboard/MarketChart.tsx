@@ -9,13 +9,19 @@ import {
 import { useEffect, useRef } from "react";
 import { useBars } from "../../hooks/useBars";
 
-export default function MarketChart() {
+type MarketChartProps = {
+    symbol?: string;
+};
+
+export default function MarketChart({
+    symbol = "AAPL",
+}: MarketChartProps) {
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<IChartApi | null>(null);
     const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
     const hasFitRef = useRef(false);
 
-    const { data } = useBars();
+    const { data } = useBars(symbol);
 
     // Create the chart exactly once
     useEffect(() => {
