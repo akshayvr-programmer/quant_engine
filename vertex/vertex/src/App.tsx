@@ -14,6 +14,9 @@ import MarketsView from "./components/dashboard/MarketsView";
 import StrategiesTab from "./components/dashboard/StrategiesTab";
 import AIAssistant from "./components/dashboard/AIAssistant";
 import Card from "./components/ui/Card";
+import AnalyticsView from "./components/dashboard/AnalyticsView";
+import ReplayView from "./components/dashboard/ReplayView";
+
 
 type Page =
     | "dashboard"
@@ -90,6 +93,13 @@ export default function App() {
             
             case "ai":
                 return <AIAssistant />
+            
+            case "analytics":
+                return <AnalyticsView />
+            
+            case "replay":
+                return <ReplayView />
+                
                 
                  
                     

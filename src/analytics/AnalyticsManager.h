@@ -4,8 +4,12 @@
 
 #pragma once
 #include <vector>
+
+#include "PerformanceMetrics.h"
 #include  "../export/EngineSnapshot.h"
 #include "../net/EventPublisher.h"
+
+class Trade;
 
 class AnalyticsManager {
 
