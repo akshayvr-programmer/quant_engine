@@ -11,7 +11,7 @@ export default function OrderEntry() {
   const [price, setPrice] = useState(100);
 
   const queryClient = useQueryClient();
-  const [executionMode, setExecutionMode] = useState<
+  const [executionMode] = useState<
     "VERTEX" | "ALPACA">("ALPACA");
 
 

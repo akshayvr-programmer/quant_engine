@@ -55,7 +55,7 @@ export default function AIAssistant() {
                     timestamp: new Date(),
                 },
             ]);
-        } catch (err) {
+        } catch {
             setMessages((prev) => [
                 ...prev,
                 {

@@ -226,7 +226,9 @@ export default function Terminal() {
 
         }
 
-        catch (error: any) {
+        catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : "Command failed";
 
             setHistory(prev => [
 
@@ -234,7 +236,7 @@ export default function Terminal() {
 
                 `> ${command}`,
 
-                `❌ ${error?.message ?? "Command failed"}`,
+                `❌ ${message}`,
 
             ]);
 

@@ -7,7 +7,9 @@ import {
     BarChart3,
     Shield,
     History,
-    Settings, MessageSquare
+    Settings,
+    MessageSquare,
+    type LucideIcon,
 } from "lucide-react";
 
 type Page =
@@ -33,7 +35,7 @@ interface SidebarProps {
 
 const items: {
 
-    icon: any;
+    icon: LucideIcon;
 
     label: string;
 

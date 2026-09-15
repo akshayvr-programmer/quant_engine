@@ -12,11 +12,13 @@ TEST(
     book.submitOrder(
         Order{
             1,
+            "AAPL",
             Side::SELL,
             OrderType::LIMIT,
             100,
             50,
-            50
+            50,
+            1
         }
     );
 
@@ -24,11 +26,13 @@ TEST(
         book.submitOrder(
             Order{
                 2,
+                "AAPL",
                 Side::BUY,
                 OrderType::LIMIT,
                 100,
                 50,
-                50
+                50,
+                2
             }
         );
 

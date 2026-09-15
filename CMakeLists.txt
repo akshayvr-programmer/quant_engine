@@ -28,6 +28,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(json)
 
 include(GoogleTest)
+enable_testing()
 
 # add to add_executable(engine ...):  src/net/EventPublisher.h  src/net/EventPublisher.cpp
 
@@ -211,3 +212,5 @@ target_link_libraries(
 
         GTest::gtest_main
 )
+
+gtest_discover_tests(OrderBookTests)

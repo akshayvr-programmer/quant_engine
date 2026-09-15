@@ -1,4 +1,10 @@
-export function formatAccount(account: any): string {
+import type {
+    AlpacaAccount,
+    AlpacaOpenOrder,
+    AlpacaPosition,
+} from "../../services/types/alpaca";
+
+export function formatAccount(account: AlpacaAccount): string {
 
     return `
 
@@ -21,7 +27,7 @@ Portfolio Value  $${Number(account.portfolioValue).toLocaleString()}
 
 }
 
-export function formatPositions(positions: any[]): string {
+export function formatPositions(positions: AlpacaPosition[]): string {
 
     if (!positions.length) {
 
@@ -58,7 +64,7 @@ ${position.symbol}
 
 Qty : ${position.quantity}
 
-Avg : $${Number(position.averageCost).toFixed(2)}
+Avg : $${Number(position.averageEntryPrice).toFixed(2)}
 
 PnL : $${Number(position.unrealizedPnL).toFixed(2)}
 
@@ -70,7 +76,7 @@ PnL : $${Number(position.unrealizedPnL).toFixed(2)}
 
 }
 
-export function formatOrders(orders: any[]): string {
+export function formatOrders(orders: AlpacaOpenOrder[]): string {
 
     if (!orders.length) {
 

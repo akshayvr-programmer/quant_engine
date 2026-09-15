@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Play, Square, Zap, TrendingUp, Activity } from "lucide-react";
 import Card from "../ui/Card";
 import { getStrategies, injectTick, startStrategy, stopStrategy, StrategyItem } from "../../services/strategies";
@@ -12,23 +12,26 @@ export default function StrategiesTab() {
   const [replaying, setReplaying] = useState(false);
   const [replayStatus, setReplayStatus] = useState<string | null>(null);
 
-  const fetchStrategies = async () => {
+  const fetchStrategies = useCallback(async () => {
     try {
       const data = await getStrategies();
       setStrategies(data);
       setError(null);
-    } catch (err: any) {
+    } catch {
       setError("Failed to connect to C++ Engine Strategy Runtime.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchStrategies();
+    const timeout = setTimeout(fetchStrategies, 0);
     const interval = setInterval(fetchStrategies, 2000);
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, [fetchStrategies]);
 
   const handleToggle = async (name: string, isRunning: boolean) => {
     try {
@@ -37,7 +40,7 @@ export default function StrategiesTab() {
       } else {
         await startStrategy(name);
       }
-      fetchStrategies();
+      void fetchStrategies();
     } catch (err) {
       console.error("Error toggling strategy:", err);
     }

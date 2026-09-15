@@ -7,4 +7,12 @@ cmake-build-release/
 .env
 
 frontend/node_modules
+*.tsbuildinfo
+vertex/vertex/vite.config.js
+vertex/vertex/vite.config.d.ts
 *.json
+!vertex/vertex/package.json
+!vertex/vertex/package-lock.json
+!vertex/vertex/tsconfig.json
+!vertex/vertex/tsconfig.app.json
+!vertex/vertex/tsconfig.node.json

@@ -8,6 +8,7 @@ import {
 } from "lightweight-charts";
 import { useEffect, useRef } from "react";
 import { useBars } from "../../hooks/useBars";
+import type { AlpacaBar } from "../../services/types/alpaca";
 
 type MarketChartProps = {
     symbol?: string;
@@ -73,7 +74,7 @@ export default function MarketChart({
         if (!seriesRef.current || !data?.bars) return;
 
         const candles = data.bars
-            .map((bar: any) => ({
+            .map((bar: AlpacaBar) => ({
                 time: Math.floor(new Date(bar.t).getTime() / 1000) as UTCTimestamp,
                 open: bar.o,
                 high: bar.h,
