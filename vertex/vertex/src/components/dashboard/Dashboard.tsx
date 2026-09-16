@@ -10,6 +10,7 @@ import {
     Landmark,
     BarChart3,
     TrendingUp,
+    Radio,
 } from "lucide-react";
 import Terminal from "../terminal/Terminal";
 const usd = new Intl.NumberFormat("en-US", {
@@ -64,11 +65,9 @@ export default function Dashboard() {
 
     return (
 
-        <div className="flex h-full flex-col gap-6">
+        <div className="flex min-h-full flex-col gap-5">
 
-            {/* Metrics */}
-
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-4 gap-5">
 
                 {metrics.map((metric) => (
 
@@ -84,71 +83,48 @@ export default function Dashboard() {
 
             </div>
 
-            {/* Main */}
-
-            <div className="grid min-h-0 flex-1 grid-cols-12 gap-6">
+            <div className="grid min-h-[420px] grid-cols-12 gap-5">
 
                 <Card
-                    title="Market Chart"
-                    className="col-span-8 min-h-0"
+                    title="Primary Market"
+                    className="col-span-7 min-h-0"
                 >
                     <MarketChart />
                 </Card>
 
                 <Card
                     title="Trade Tape"
-                    className="col-span-4 min-h-0"
+                    className="col-span-3 min-h-0"
                 >
                     <TradeTape />
                 </Card>
 
+                <Card
+                    title="Terminal"
+                    className="col-span-2 min-h-0"
+                >
+                    <Terminal compact />
+                </Card>
+
             </div>
 
-            {/* Terminal */}
-
-            <Card
-                title="Vertex Terminal"
-                className="h-80"
-            >
-
-                <div className="flex h-full flex-col rounded-lg bg-[#14110F] p-4 font-mono">
-
-                    <div className="mb-4 text-[#D6A15F]">
-
-                        <Terminal />
-
+            <div className="grid grid-cols-3 gap-5">
+                <div className="rounded-lg border border-[#2A2420] bg-[#1C1815] p-4">
+                    <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-widest text-[#8B8178]">
+                        <Radio className="h-4 w-4 text-[#D6A15F]" />
+                        Runtime
                     </div>
-
-                    <div className="flex-1 space-y-2 overflow-y-auto text-sm">
-
-                        <div className="text-[#6FCF97]">
-
-                            ✓ Connected to Alpaca Paper
-
-                        </div>
-
-                        <div className="text-[#A79B91]">
-
-                            Type <span className="text-[#D6A15F]">help</span> to begin.
-
-                        </div>
-
-                    </div>
-
-                    <div className="mt-4 flex items-center gap-2 border-t border-[#2A2420] pt-3">
-
-                        <span className="text-[#D6A15F]">&gt;</span>
-
-                        <input
-                            className="flex-1 bg-transparent text-white outline-none"
-                            placeholder="buy AAPL 10 market"
-                        />
-
-                    </div>
-
+                    <div className="text-sm text-[#E5DED6]">Engine on port 8080, Alpaca Paper mode.</div>
                 </div>
-
-            </Card>
+                <div className="rounded-lg border border-[#2A2420] bg-[#1C1815] p-4">
+                    <div className="mb-3 text-xs uppercase tracking-widest text-[#8B8178]">Next Action</div>
+                    <div className="text-sm text-[#E5DED6]">Check Markets, run Replay Lab, then enable strategies.</div>
+                </div>
+                <div className="rounded-lg border border-[#2A2420] bg-[#1C1815] p-4">
+                    <div className="mb-3 text-xs uppercase tracking-widest text-[#8B8178]">Mode</div>
+                    <div className="text-sm text-[#6FCF97]">Paper trading only</div>
+                </div>
+            </div>
 
         </div>
 

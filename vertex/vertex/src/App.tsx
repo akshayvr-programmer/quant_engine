@@ -22,12 +22,9 @@ type Page =
     | "dashboard"
     | "orders"
     | "markets"
-    | "portfolio"
     | "strategies"
     | "analytics"
-    | "risk"
     | "replay"
-    | "settings"
     | "ai";
 
 export default function App() {
@@ -43,20 +40,20 @@ export default function App() {
 
                 return (
 
-                    <div className="flex h-full flex-col gap-6">
+                    <div className="flex min-h-full flex-col gap-5">
 
-                        <div className="grid grid-cols-12 gap-6">
+                        <div className="grid grid-cols-12 gap-5">
 
                             <Card
                                 title="Open Orders"
-                                className="col-span-6 h-[420px]"
+                                className="col-span-6 h-[360px]"
                             >
                                 <OpenOrders />
                             </Card>
 
                             <Card
                                 title="Filled Orders"
-                                className="col-span-6 h-[420px]"
+                                className="col-span-6 h-[360px]"
                             >
                                 <TradeTape />
                             </Card>
@@ -65,7 +62,7 @@ export default function App() {
 
                         <Card
                             title="Positions"
-                            className="h-[420px]"
+                            className="h-[360px]"
                         >
                             <PositionsTable />
                         </Card>
@@ -78,34 +75,18 @@ export default function App() {
 
                 return <MarketsView />;
 
-            case "portfolio":
-
-                return (
-                    <div className="text-[#A79B91]">
-                        Portfolio coming soon...
-                    </div>
-                );
-
             case "strategies":
-
-                
-                    return <StrategiesTab />
+                return <StrategiesTab />;
             
             case "ai":
-                return <AIAssistant />
+                return <AIAssistant />;
             
             case "analytics":
-                return <AnalyticsView />
+                return <AnalyticsView />;
             
             case "replay":
-                return <ReplayView />
-                
-                
-                 
-                    
-                
+                return <ReplayView />;
             
-
             default:
 
                 return <Dashboard />;

@@ -16,6 +16,7 @@ import MarketChart from "./MarketChart";
 import { getLatestQuote } from "../../services/alpaca";
 
 const WATCHLIST = ["AAPL", "MSFT", "NVDA", "TSLA", "SPY", "QQQ"];
+const RESEARCH_SYMBOLS = ["AAPL", "MSFT", "NVDA", "TSLA", "AMD", "META", "GOOGL", "AMZN", "SPY", "QQQ"];
 
 const GLOBAL_MARKETS = [
   { name: "S&P 500", region: "US", value: "6,244.91", change: 0.38 },
@@ -112,8 +113,13 @@ export default function MarketsView() {
   const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
   const [symbolInput, setSymbolInput] = useState("AAPL");
 
+  const trackedSymbols = useMemo(
+    () => Array.from(new Set([...WATCHLIST, selectedSymbol])),
+    [selectedSymbol]
+  );
+
   const quoteQueries = useQueries({
-    queries: WATCHLIST.map((symbol) => ({
+    queries: trackedSymbols.map((symbol) => ({
       queryKey: ["alpaca-quote", symbol],
       queryFn: () => getLatestQuote(symbol),
       refetchInterval: 2000,
@@ -123,13 +129,13 @@ export default function MarketsView() {
 
   const quotes = useMemo(
     () =>
-      WATCHLIST.map((symbol, index) => ({
+      trackedSymbols.map((symbol, index) => ({
         symbol,
         quote: quoteQueries[index].data,
         isLoading: quoteQueries[index].isLoading,
         isError: quoteQueries[index].isError,
       })),
-    [quoteQueries]
+    [quoteQueries, trackedSymbols]
   );
 
   const selectedQuote =
@@ -163,14 +169,14 @@ export default function MarketsView() {
             Global Market Intelligence
           </h2>
           <p className="mt-2 max-w-3xl text-sm text-[#A79B91]">
-            Live quote monitoring, chart context, macro developments, and market
-            performance in one trader-focused workspace.
+            Symbol research, live quotes, chart context, macro developments, and
+            replay-ready market notes in one workspace.
           </p>
         </div>
 
         <form
           onSubmit={handleSymbolSubmit}
-          className="flex w-80 items-center gap-2 rounded-xl border border-[#3C342E] bg-[#1C1815] p-2"
+          className="flex w-80 items-center gap-2 rounded-lg border border-[#3C342E] bg-[#1C1815] p-2"
         >
           <Search className="h-4 w-4 text-[#8B8178]" />
           <input
@@ -188,8 +194,28 @@ export default function MarketsView() {
         </form>
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
-        <section className="col-span-8 flex min-h-[520px] flex-col rounded-xl border border-[#2A2420] bg-[#1C1815]">
+      <div className="flex flex-wrap gap-2">
+        {RESEARCH_SYMBOLS.map((symbol) => (
+          <button
+            key={symbol}
+            type="button"
+            onClick={() => {
+              setSelectedSymbol(symbol);
+              setSymbolInput(symbol);
+            }}
+            className={`rounded-md border px-3 py-2 text-xs font-semibold transition ${
+              selectedSymbol === symbol
+                ? "border-[#D6A15F] bg-[#D6A15F] text-[#171411]"
+                : "border-[#3C342E] bg-[#1C1815] text-[#B8ADA3] hover:border-[#D6A15F]/70 hover:text-[#F5F1EB]"
+            }`}
+          >
+            {symbol}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-12 gap-5">
+        <section className="col-span-8 flex min-h-[480px] flex-col rounded-lg border border-[#2A2420] bg-[#1C1815]">
           <div className="flex items-center justify-between border-b border-[#2A2420] px-5 py-4">
             <div>
               <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#8B8178]">
@@ -228,12 +254,12 @@ export default function MarketsView() {
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 p-4">
+          <div className="min-h-0 flex-1 p-3">
             <MarketChart symbol={selectedSymbol} />
           </div>
         </section>
 
-        <aside className="col-span-4 flex min-h-[520px] flex-col rounded-xl border border-[#2A2420] bg-[#1C1815]">
+        <aside className="col-span-4 flex min-h-[480px] flex-col rounded-lg border border-[#2A2420] bg-[#1C1815]">
           <div className="border-b border-[#2A2420] px-5 py-4">
             <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#8B8178]">
               <Activity className="h-4 w-4 text-[#D6A15F]" />
@@ -282,8 +308,8 @@ export default function MarketsView() {
         </aside>
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
-        <section className="col-span-7 rounded-xl border border-[#2A2420] bg-[#1C1815]">
+      <div className="grid grid-cols-12 gap-5">
+        <section className="col-span-7 rounded-lg border border-[#2A2420] bg-[#1C1815]">
           <div className="flex items-center justify-between border-b border-[#2A2420] px-5 py-4">
             <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#8B8178]">
               <Globe2 className="h-4 w-4 text-[#D6A15F]" />
@@ -296,7 +322,7 @@ export default function MarketsView() {
             {GLOBAL_MARKETS.map((market) => (
               <div
                 key={market.name}
-                className="rounded-lg border border-[#2A2420] bg-[#211D1A] p-4"
+                className="rounded-md border border-[#2A2420] bg-[#211D1A] p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -317,7 +343,7 @@ export default function MarketsView() {
           </div>
         </section>
 
-        <section className="col-span-5 rounded-xl border border-[#2A2420] bg-[#1C1815]">
+        <section className="col-span-5 rounded-lg border border-[#2A2420] bg-[#1C1815]">
           <div className="flex items-center gap-2 border-b border-[#2A2420] px-5 py-4 text-xs uppercase tracking-widest text-[#8B8178]">
             <Newspaper className="h-4 w-4 text-[#D6A15F]" />
             Market Newswire
@@ -342,8 +368,8 @@ export default function MarketsView() {
         </section>
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
-        <section className="col-span-8 rounded-xl border border-[#2A2420] bg-[#1C1815]">
+      <div className="grid grid-cols-12 gap-5">
+        <section className="col-span-8 rounded-lg border border-[#2A2420] bg-[#1C1815]">
           <div className="flex items-center gap-2 border-b border-[#2A2420] px-5 py-4 text-xs uppercase tracking-widest text-[#8B8178]">
             <Radar className="h-4 w-4 text-[#D6A15F]" />
             Global Developments
@@ -369,7 +395,7 @@ export default function MarketsView() {
           </div>
         </section>
 
-        <section className="col-span-4 rounded-xl border border-[#2A2420] bg-[#1C1815]">
+        <section className="col-span-4 rounded-lg border border-[#2A2420] bg-[#1C1815]">
           <div className="flex items-center gap-2 border-b border-[#2A2420] px-5 py-4 text-xs uppercase tracking-widest text-[#8B8178]">
             <Bell className="h-4 w-4 text-[#D6A15F]" />
             Desk Alerts

@@ -17,21 +17,16 @@ import {
     formatOrders,
 } from "./TerminalFormatter";
 
-export default function Terminal() {
+type TerminalProps = {
+    compact?: boolean;
+};
+
+export default function Terminal({ compact = false }: TerminalProps) {
 
     const [history, setHistory] = useState<string[]>([
-`██╗   ██╗███████╗██████╗ ████████╗███████╗██╗  ██╗
-██║   ██║██╔════╝██╔══██╗╚══██╔══╝██╔════╝╚██╗██╔╝
-██║   ██║█████╗  ██████╔╝   ██║   █████╗   ╚███╔╝
-╚██╗ ██╔╝██╔══╝  ██╔══██╗   ██║   ██╔══╝   ██╔██╗
- ╚████╔╝ ███████╗██║  ██║   ██║   ███████╗██╔╝ ██╗
-  ╚═══╝  ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝`,
-
-"",
-"Vertex Quant Trading Terminal v0.1",
-"Connected to Alpaca Paper",
-"",
-"Type 'help' to begin.",
+        "Vertex Terminal v1.2",
+        "Connected to Alpaca Paper",
+        "Try: account, positions, orders, buy AAPL 10 market",
 ]);
 
 
@@ -256,11 +251,13 @@ export default function Terminal() {
 
     return (
 
-        <div className="flex h-full flex-col rounded-lg bg-[#14110F] p-4 font-mono">
+        <div className="flex h-full min-h-0 flex-col rounded-lg bg-[#14110F] p-3 font-mono">
 
             <div
                 ref={historyRef}
-                className="flex-1 overflow-y-auto whitespace-pre-wrap text-sm"
+                className={`scroll-area flex-1 whitespace-pre-wrap pr-2 ${
+                    compact ? "text-xs leading-5" : "text-sm"
+                }`}
             >
 
                 {history.map((line, index) => (
@@ -276,7 +273,7 @@ export default function Terminal() {
 
             </div>
 
-            <div className="mt-4 flex items-center border-t border-[#2A2420] pt-3">
+            <div className="mt-3 flex items-center border-t border-[#2A2420] pt-3">
                 <Prompt executing={isExecuting} />
 
 

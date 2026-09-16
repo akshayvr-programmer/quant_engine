@@ -20,18 +20,25 @@ body {
     box-sizing: border-box;
 }
 
+button,
+input,
+textarea {
+    font: inherit;
+}
+
 /* ============================
    Vertex Premium Scrollbars
 ============================ */
 
 .scroll-area {
-    overflow-y: auto;
+    overflow: auto;
     scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
+    scrollbar-color: #3C342E transparent;
 }
 
 .scroll-area::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 
 .scroll-area::-webkit-scrollbar-track {
@@ -39,17 +46,10 @@ body {
 }
 
 .scroll-area::-webkit-scrollbar-thumb {
-    background: transparent;
+    background: #3C342E;
     border-radius: 9999px;
-    transition: background 0.2s ease;
-}
-
-.scroll-area:hover {
-    scrollbar-color: #4A4038 transparent;
-}
-
-.scroll-area:hover::-webkit-scrollbar-thumb {
-    background: #4A4038;
+    border: 2px solid transparent;
+    background-clip: content-box;
 }
 
 .scroll-area:hover::-webkit-scrollbar-thumb:hover {

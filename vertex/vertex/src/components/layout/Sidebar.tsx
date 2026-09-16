@@ -1,13 +1,10 @@
 import {
     LayoutDashboard,
     ChartCandlestick,
-    Briefcase,
     ReceiptText,
     Brain,
     BarChart3,
-    Shield,
-    History,
-    Settings,
+    FlaskConical,
     MessageSquare,
     type LucideIcon,
 } from "lucide-react";
@@ -15,13 +12,10 @@ import {
 type Page =
     | "dashboard"
     | "markets"
-    | "portfolio"
     | "orders"
     | "strategies"
     | "analytics"
-    | "risk"
     | "replay"
-    | "settings"
     | "ai";
 
 
@@ -56,12 +50,6 @@ const items: {
     },
 
     {
-        icon: Briefcase,
-        label: "Portfolio",
-        page: "portfolio",
-    },
-
-    {
         icon: ReceiptText,
         label: "Orders",
         page: "orders",
@@ -85,23 +73,10 @@ const items: {
     },
 
     {
-        icon: Shield,
-        label: "Risk",
-        page: "risk",
-    },
-
-    {
-        icon: History,
-        label: "Replay",
+        icon: FlaskConical,
+        label: "Replay Lab",
         page: "replay",
     },
-
-    {
-        icon: Settings,
-        label: "Settings",
-        page: "settings",
-    },
-
 ];
 
 export default function Sidebar({
@@ -114,11 +89,11 @@ export default function Sidebar({
 
     return (
 
-        <div className="flex h-full flex-col">
+        <div className="flex h-full min-h-0 flex-col">
 
-            <div className="px-8 py-8">
+            <div className="px-6 py-6">
 
-                <h1 className="text-3xl font-bold tracking-tight text-[#D6A15F]">
+                <h1 className="text-2xl font-bold tracking-tight text-[#D6A15F]">
 
                     Vertex
 
@@ -132,7 +107,7 @@ export default function Sidebar({
 
             </div>
 
-            <nav className="flex-1 px-4">
+            <nav className="scroll-area min-h-0 flex-1 px-3">
 
                 {items.map(({
 
@@ -154,7 +129,7 @@ export default function Sidebar({
 
                         }
 
-                        className={`mb-2 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-all duration-200
+                        className={`mb-1.5 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-all duration-200
 
                         ${
                             currentPage === page
@@ -176,7 +151,7 @@ export default function Sidebar({
 
             </nav>
 
-            <div className="border-t border-[#3C342E] p-6">
+            <div className="border-t border-[#3C342E] p-5">
 
                 <div className="text-sm text-[#A79B91]">
 
